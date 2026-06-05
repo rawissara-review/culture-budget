@@ -312,7 +312,7 @@
 
 const { useState, useEffect, useMemo, useRef, useCallback } = React;
 
-const SHEET_JSON_URL = 'SHEET_JSON_URL'; // ← replace with Apps Script doGet URL
+const SHEET_JSON_URL = 'https://script.google.com/macros/s/AKfycbywO-O9qzJLcaC3g3Fw2JUtlCTIINuID4uCf6D9x_eAhzk17X7_Xe9Whm96bCGvXtIV/exec';
 const BOOTH_URL = 'https://ppleculture-budget.vercel.app/Mobile%20Booth.html';
 const REAL_TOTAL = 3855;
 
@@ -632,7 +632,7 @@ function App() {
           <span className="footer-url">{BOOTH_URL}</span>
         </div>
         <div className="footer-gap" />
-        {isDemo && <span className="footer-demo">DEMO DATA</span>}
+        {isDemo && <span className="footer-demo" style={{display:'none'}}>DEMO DATA</span>}
         <span className="footer-updated">อัปเดต {timeStr} · ทุก 10 วินาที</span>
       </footer>
 
