@@ -107,7 +107,7 @@
       overflow: hidden;
     }
     .panel-header {
-      flex: 0 0 5%;
+      flex: 0 0 15%;
       display: flex; flex-direction: column; justify-content: center;
       overflow: hidden;
     }
@@ -116,7 +116,7 @@
     .panel-sub { font-size: 11px; color: var(--tx2); }
 
     .cgrid {
-      flex: 0 0 70%; overflow: hidden;
+      flex: 0 0 65%; overflow: hidden;
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       grid-template-rows: repeat(2, 1fr);
@@ -138,9 +138,8 @@
     .cc-name  { font-size: clamp(11px, 0.9vw, 15px); line-height: 1.3; margin-bottom: 5px; }
     .cc-agency{
       display: inline-block;
-      font-size: clamp(8px, 0.65vw, 11px); color: var(--tx3); line-height: 1;
-      background: var(--s3); border: 1px solid var(--bd);
-      border-radius: 20px; padding: 3px 8px;
+      font-size: clamp(8px, 0.65vw, 11px); line-height: 1;
+      border-radius: 20px; padding: 10px;
     }
     .cc-spacer { flex: 1; min-height: 6px; }
     .cc-avg   {
@@ -165,7 +164,7 @@
 
     /* ─── QR BAR (bottom of left panel) ──────────────────── */
     .qr-bar {
-      flex: 0 0 25%;
+      flex: 0 0 20%;
       border-top: 1px solid var(--bd);
       display: flex; align-items: center; gap: 24px;
     }
@@ -394,8 +393,8 @@ function parseRows(rows) {
     return {
       top: sorted[0].name.slice(0, 16),
       topVal: Math.round(allocs[sorted[0].id]),
-      second: sorted[1] ? sorted[1].name.slice(0, 16) : '',
-      secondVal: sorted[1] ? Math.round(allocs[sorted[1].id]) : 0,
+      second: (sorted[1] && allocs[sorted[1].id] > 0) ? sorted[1].name.slice(0, 16) : '',
+      secondVal: (sorted[1] && allocs[sorted[1].id] > 0) ? Math.round(allocs[sorted[1].id]) : 0,
       ts: (() => {
         try {return new Date(row[0]).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });}
         catch (_) {return '—';}
@@ -645,8 +644,14 @@ function App() {
               <div key={i} className={`rec-item new-item${i === 0 ? ' rec-first' : ''}`} style={{ animationDelay: `${i * 0.07}s` }}>
                   <div className="rec-top">
                     {i === 0
-                      ? <>ให้ <span className="rec-highlight">{r.top}</span> <span className="rec-amount">{r.topVal}M</span> · <span className="rec-highlight" style={{fontSize:13}}>{r.second}</span> <span className="rec-amount">{r.secondVal}M</span></>
-                      : <>ให้ {r.top} {r.topVal}M · {r.second} {r.secondVal}M</>
+                      ? <>{r.second
+                          ? <>ให้ <span className="rec-highlight">{r.top}</span> <span className="rec-amount">{r.topVal}M</span> · <span className="rec-highlight" style={{fontSize:13}}>{r.second}</span> <span className="rec-amount">{r.secondVal}M</span></>
+                          : <>ให้ <span className="rec-highlight">{r.top}</span> <span className="rec-amount">{r.topVal}M</span></>
+                        }</>
+                      : <>{r.second
+                          ? <>ให้ {r.top} {r.topVal}M · {r.second} {r.secondVal}M</>
+                          : <>ให้ {r.top} {r.topVal}M</>
+                        }</>
                     }
                   </div>
                   <div className="rec-time">{r.ts}</div>
