@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Display — แฮกงบวัฒนธรรม 2569</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    @font-face { font-family:"Anakotmai"; src:url("fonts/anakotmai-light.woff2") format("woff2"); font-weight:300; font-display:swap; }
+    @font-face { font-family:"Anakotmai"; src:url("fonts/anakotmai-medium.woff2") format("woff2"); font-weight:500; font-display:swap; }
+    @font-face { font-family:"Anakotmai"; src:url("fonts/anakotmai-bold.woff2") format("woff2"); font-weight:700; font-display:swap; }
+
+    :root {
+      --bg:     #0B0A08;
+      --s1:     #131210;
+      --s2:     #1D1C19;
+      --s3:     #252320;
+      --bd:     rgba(255,255,255,0.06);
+      --bdo:    rgba(255,106,20,0.22);
+      --or:     #FF6A14;
+      --or-dim: rgba(255,106,20,0.09);
+      --glow:   0 0 28px rgba(255,106,20,0.26);
+      --tx:     #EDE9E3;
+      --tx2:    #7A766D;
+      --tx3:    #45433E;
+      --f:      "Anakotmai","IBM Plex Sans Thai",system-ui,sans-serif;
+      --mono:   "JetBrains Mono",monospace;
+      --ease:   cubic-bezier(0.22,1,0.36,1);
+    }
+
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+
+    html, body {
+      background: var(--bg);
+      color: var(--tx);
+      font-family: var(--f);
+      font-weight: 300;
+      -webkit-font-smoothing: antialiased;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* subtle dot grid */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      pointer-events: none;
+      background-image: radial-gradient(circle, rgba(255,106,20,0.05) 1px, transparent 1px);
+      background-size: 32px 32px;
+      z-index: 0;
+    }
+
+    /* ─── LAYOUT ────────────────────────────────────────── */
+    #root { height: 100vh; position: relative; z-index: 1; }
+    .app  { display: flex; flex-direction: column; height: 100vh; }
+
+    /* ─── HEADER ─────────────────────────────────────────── */
+    .hdr {
+      display: flex; align-items: center; gap: 20px;
+      padding: 0 40px;
+      height: 68px; min-height: 68px;
+      border-bottom: 1px solid var(--bd);
+    }
+    .hdr-logo { height: 32px; opacity: .85; filter: brightness(1.1); }
+    .hdr-divider { width: 1px; height: 28px; background: var(--bd); }
+    .hdr-title { font-size: 18px; font-weight: 700; letter-spacing: -.01em; }
+    .hdr-title em { color: var(--or); font-style: normal; }
+    .hdr-gap { flex: 1; }
+
+    .live-badge {
+      display: flex; align-items: center; gap: 7px;
+      font-size: 10px; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--or);
+      padding: 6px 12px;
+      border: 1px solid var(--bdo);
+      border-radius: 3px;
+    }
+    .live-dot {
+      width: 6px; height: 6px;
+      background: var(--or); border-radius: 50%;
+      animation: blink 1.6s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:.15;} }
+
+    .hdr-count { font-size: 13px; color: var(--tx2); }
+    .hdr-count strong {
+      font-family: var(--mono); font-size: 28px; font-weight: 600;
+      color: var(--tx); margin-right: 4px;
+      display: inline-block;
+      transition: color .3s;
+    }
+    .hdr-count strong.bump { color: var(--or); }
+
+    /* ─── MAIN ───────────────────────────────────────────── */
+    .main { display: flex; flex: 1; overflow: hidden; }
+
+    /* ─── LEFT PANEL — bar chart ─────────────────────────── */
+    .panel-l {
+      flex: 0 0 60%;
+      border-right: 1px solid var(--bd);
+      padding: 20px 28px 16px;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+    .panel-eyebrow {
+      font-size: 10px; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--tx3); margin-bottom: 3px;
+    }
+    .panel-title { font-size: 20px; font-weight: 700; margin-bottom: 3px; }
+    .panel-title em { color: var(--or); font-style: normal; }
+    .panel-sub { font-size: 12px; color: var(--tx2); margin-bottom: 10px; }
+
+    /* chart legend */
+    .clegend { display: flex; gap: 16px; margin-bottom: 10px; }
+    .cl { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--tx2); }
+    .cl-bar { width: 14px; height: 3px; border-radius: 2px; }
+    .cl-or  { background: var(--or); }
+    .cl-gr  { background: #4076FA; }
+
+    /* 5×2 card grid */
+    .cgrid {
+      flex: 1; overflow: hidden;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: 8px;
+    }
+    .ccard {
+      background: var(--s1); border: 1px solid var(--bd);
+      border-radius: 10px; padding: clamp(8px, 1vw, 16px) clamp(10px, 1.1vw, 18px);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .ccard--top  { border-color: var(--bdo); background: var(--or-dim); }
+    .ccard--zero { opacity: .55; }
+    .cc-rank {
+      font-family: var(--mono); font-size: clamp(9px, 0.7vw, 12px); font-weight: 600;
+      color: var(--tx3); margin-bottom: clamp(6px, 0.8vw, 14px);
+    }
+    .cc-rank--top { color: var(--or); }
+    .cc-icon  { font-size: clamp(20px, 2.2vw, 38px); line-height: 1; margin-bottom: clamp(4px, 0.5vw, 10px); }
+    .cc-name  { font-size: clamp(11px, 0.9vw, 15px); line-height: 1.3; margin-bottom: 5px; }
+    .cc-agency{
+      display: inline-block;
+      font-size: clamp(8px, 0.65vw, 11px); color: var(--tx3); line-height: 1;
+      background: var(--s3); border: 1px solid var(--bd);
+      border-radius: 20px; padding: 3px 8px;
+    }
+    .cc-spacer { flex: 1; min-height: 6px; }
+    .cc-avg   {
+      font-family: var(--mono); font-size: clamp(14px, 1.4vw, 22px); font-weight: 600;
+      margin: clamp(6px, 0.8vw, 12px) 0 clamp(6px, 0.8vw, 12px);
+    }
+    .cc-avg-u { font-size: clamp(9px, 0.65vw, 12px); color: var(--tx2); font-family: var(--f); font-weight: 300; }
+    .cc-bars  { display: flex; flex-direction: row; gap: clamp(4px, 0.5vw, 8px); height: clamp(44px, 5vw, 72px); align-items: flex-end; }
+    .cc-brow  { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; height: 100%; }
+    .cc-btrack-v {
+      flex: 1; width: 100%;
+      background: var(--s2); border-radius: 3px 3px 0 0;
+      display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden;
+    }
+    .cc-bfill-v { width: 100%; border-radius: 3px 3px 0 0; transition: height .7s var(--ease); }
+    .cbf-or   { background: var(--or); box-shadow: 0 0 5px rgba(255,106,20,.3); }
+    .cbf-bl   { background: #4076FA;  box-shadow: 0 0 5px rgba(64,118,250,.3); }
+    .cc-blbl  { font-size: clamp(7px, 0.6vw, 10px); color: var(--tx2); text-align: center; white-space: nowrap; }
+    .cc-bval  { font-family: var(--mono); font-size: clamp(7px, 0.6vw, 10px); text-align: center; }
+    .cbv-or   { color: var(--or); }
+    .cbv-bl   { color: #4076FA; }
+
+    /* ─── RIGHT PANEL — stats ────────────────────────────── */
+    .panel-r {
+      flex: 1;
+      padding: 24px 28px;
+      display: flex; flex-direction: column; gap: 16px;
+      overflow-y: auto;
+    }
+    .panel-r::-webkit-scrollbar { width: 3px; }
+    .panel-r::-webkit-scrollbar-thumb { background: var(--s2); }
+
+    .stat-lbl {
+      font-size: 10px; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--tx3); margin-bottom: 7px;
+    }
+
+    /* stat card variants */
+    .sc {
+      background: var(--s1); border: 1px solid var(--bd);
+      border-radius: 8px; padding: 14px 16px;
+    }
+    .sc-or {
+      background: var(--or-dim); border: 1px solid var(--bdo);
+      border-radius: 8px; padding: 14px 16px;
+    }
+
+    /* count display */
+    .count-big {
+      font-family: var(--mono); font-size: 48px; font-weight: 600;
+      color: var(--tx); line-height: 1;
+      transition: all .3s var(--ease);
+    }
+    .count-unit { font-size: 14px; color: var(--tx2); margin-top: 4px; }
+
+    /* top project */
+    .top1-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .top1-icon { font-size: 20px; }
+    .top1-name { font-size: 15px; font-weight: 500; }
+    .top1-val { font-family: var(--mono); font-size: 26px; font-weight: 600; color: var(--or); }
+
+    /* gap card */
+    .gap-name { font-size: 14px; font-weight: 500; margin-bottom: 8px; }
+    .gap-vs {
+      display: flex; align-items: center;
+      gap: 10px; flex-wrap: wrap;
+    }
+    .gap-side { display: flex; flex-direction: column; gap: 2px; }
+    .gap-who { font-size: 10px; color: var(--tx3); }
+    .gap-n  { font-family: var(--mono); font-size: 20px; font-weight: 600; }
+    .gn-or  { color: var(--or); }
+    .gn-gr  { color: var(--tx2); }
+    .gap-sep { font-size: 16px; color: var(--tx3); }
+
+    /* welfare */
+    .wf-pct { font-family: var(--mono); font-size: 32px; font-weight: 600; color: var(--or); }
+    .wf-sub { font-size: 12px; color: var(--tx2); margin-top: 5px; line-height: 1.5; }
+
+    /* recent */
+    .rec-list { display: flex; flex-direction: column; gap: 5px; flex: 1; overflow-y: auto; }
+    .rec-list::-webkit-scrollbar { width: 2px; }
+    .rec-list::-webkit-scrollbar-thumb { background: var(--s3); }
+    .rec-item {
+      background: var(--s1); border: 1px solid var(--bd);
+      border-radius: 6px; padding: 9px 12px;
+    }
+    .rec-item.new-item { animation: slideIn .4s var(--ease) both; }
+    @keyframes slideIn {
+      from { opacity:0; transform:translateX(12px); }
+      to   { opacity:1; transform:translateX(0); }
+    }
+    .rec-top { font-size: 12px; font-weight: 500; margin-bottom: 2px; }
+    .rec-top em { color: var(--or); font-style: normal; }
+    .rec-item.rec-first { background: var(--or-dim); border-color: var(--bdo); }
+    .rec-first .rec-top { font-size: 13px; }
+    .rec-highlight { color: var(--or); font-weight: 700; font-size: 15px; }
+    .rec-amount    { font-family: var(--mono); font-weight: 700; color: var(--or); }
+    .rec-time { font-size: 10px; color: var(--tx2); font-family: var(--mono); }
+
+    /* QR — prominent */
+    .qr-prominent {
+      margin-top: auto;
+      background: var(--or-dim);
+      border: 1px solid var(--bdo);
+      border-radius: 10px;
+      padding: 16px 18px;
+      animation: qrPulse 2.5s ease-in-out infinite;
+    }
+    @keyframes qrPulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(255,106,20,0.35); }
+      50%      { box-shadow: 0 0 0 8px rgba(255,106,20,0); }
+    }
+    .qr-p-inner { display: flex; align-items: center; gap: 16px; }
+    .qr-p-box {
+      width: 100px; height: 100px; flex-shrink: 0;
+      background: var(--s1); border-radius: 8px; overflow: hidden;
+      border: 1px solid var(--bdo);
+    }
+    .qr-p-box img { width: 100%; height: 100%; display: block; }
+    .qr-p-label {
+      font-size: 11px; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--tx2); margin-bottom: 2px;
+    }
+    .qr-p-cta {
+      font-size: 22px; font-weight: 700; color: var(--or);
+      line-height: 1.1; margin-bottom: 8px;
+    }
+    .qr-p-url { font-family: var(--mono); font-size: 12px; color: var(--tx2); }
+
+    /* ─── FOOTER ─────────────────────────────────────────── */
+    .footer {
+      height: 60px; min-height: 60px;
+      border-top: 1px solid var(--bd);
+      display: flex; align-items: center;
+      padding: 0 32px; gap: 16px;
+    }
+    .footer-qr {
+      width: 40px; height: 40px; flex-shrink: 0;
+      background: var(--s1); border-radius: 6px; overflow: hidden;
+      border: 1px solid var(--bdo);
+    }
+    .footer-qr img { width: 100%; height: 100%; display: block; }
+    .footer-qr-info { display: flex; flex-direction: column; gap: 2px; }
+    .footer-scan {
+      font-size: 11px; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--or);
+    }
+    .footer-url { font-family: var(--mono); font-size: 11px; color: var(--tx3); }
+    .footer-gap { flex: 1; }
+    .footer-updated { font-size: 11px; color: var(--tx3); font-family: var(--mono); }
+    .footer-demo {
+      font-size: 10px; font-weight: 700; letter-spacing: .08em;
+      text-transform: uppercase; color: #E8B84B;
+      background: rgba(232,184,75,.1); border: 1px solid rgba(232,184,75,.2);
+      padding: 3px 8px; border-radius: 3px;
+    }
+  </style>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+const { useState, useEffect, useMemo, useRef, useCallback } = React;
+
+const SHEET_JSON_URL = 'SHEET_JSON_URL'; // ← replace with Apps Script doGet URL
+const BOOTH_URL = 'https://your-booth-url.claude.site';
+const REAL_TOTAL = 3855;
+
+const PROJECTS = [
+{ id: 'film',     icon: '🎬', name: 'ทุนหนัง/ซีรีส์',          agency: 'กรมส่งเสริมวัฒนธรรม',        real: 104  },
+{ id: 'welfare',  icon: '🛡️', name: 'สวัสดิการศิลปินอิสระ',    agency: 'ไม่มีหน่วยงานรับผิดชอบ',     real: 0    },
+{ id: 'music',    icon: '🎵', name: 'ดนตรี / Music Awards',     agency: 'กรมส่งเสริมวัฒนธรรม',        real: 43   },
+{ id: 'game',     icon: '🎮', name: 'เกม Soft Power ไทย',       agency: 'กรมส่งเสริมวัฒนธรรม',        real: 37   },
+{ id: 'perform',  icon: '🎭', name: 'พื้นที่ศิลปะการแสดง',     agency: 'กรมส่งเสริมวัฒนธรรม',        real: 33   },
+{ id: 'book',     icon: '📚', name: 'หนังสือและวรรณกรรม',      agency: 'กรมส่งเสริมวัฒนธรรม',        real: 45   },
+{ id: 'cea',      icon: '🏙️', name: 'เศรษฐกิจสร้างสรรค์ (CEA)',agency: 'สำนักนายกรัฐมนตรี',           real: 566  },
+{ id: 'heritage', icon: '🏛️', name: 'โบราณสถาน / มรดกฯ',       agency: 'กรมศิลปากร',                  real: 2809 },
+{ id: 'forum',    icon: '🎪', name: 'Soft Power Forum',         agency: 'กรมส่งเสริมวัฒนธรรม',        real: 77   },
+{ id: 'archive',  icon: '🎞️', name: 'หอภาพยนตร์แห่งชาติ',     agency: 'หอภาพยนตร์ (องค์การมหาชน)',   real: 141  }];
+
+
+const AGENCY_COLORS = {
+  'กรมส่งเสริมวัฒนธรรม':       { bg: 'rgba(255,106,20,0.14)',  color: '#FF6A14', border: 'rgba(255,106,20,0.35)' },
+  'ไม่มีหน่วยงานรับผิดชอบ':    { bg: 'rgba(255,69,58,0.14)',   color: '#FF453A', border: 'rgba(255,69,58,0.35)'  },
+  'สำนักนายกรัฐมนตรี':          { bg: 'rgba(64,118,250,0.14)',  color: '#4076FA', border: 'rgba(64,118,250,0.35)' },
+  'กรมศิลปากร':                  { bg: 'rgba(52,199,89,0.14)',   color: '#34C759', border: 'rgba(52,199,89,0.35)'  },
+  'หอภาพยนตร์ (องค์การมหาชน)': { bg: 'rgba(175,82,222,0.14)',  color: '#AF52DE', border: 'rgba(175,82,222,0.35)' },
+};
+const DEFAULT_AGENCY_COLOR = { bg: 'var(--s3)', color: 'var(--tx3)', border: 'var(--bd)' };
+const DEMO_DATA = {
+  count: 42,
+  averages: {
+    film: 24, welfare: 27, music: 14, game: 11,
+    perform: 8, book: 7, cea: 4, heritage: 3, forum: 4, archive: 2
+  },
+  welfareGtZero: 78,
+  recent: [
+  { top: 'ทุนตรงศิลปิน', topVal: 35, second: 'ภาพยนตร์', secondVal: 25, ts: '2 นาทีที่แล้ว' },
+  { top: 'ภาพยนตร์', topVal: 40, second: 'ดนตรี', secondVal: 20, ts: '5 นาทีที่แล้ว' },
+  { top: 'ทุนตรงศิลปิน', topVal: 30, second: 'เกม Soft Power', secondVal: 22, ts: '8 นาทีที่แล้ว' },
+  { top: 'ดนตรี', topVal: 28, second: 'หนังสือ', secondVal: 18, ts: '11 นาทีที่แล้ว' },
+  { top: 'เศรษฐกิจสร้างสรรค์', topVal: 45, second: 'ทุนตรงศิลปิน', secondVal: 30, ts: '15 นาทีที่แล้ว' },
+  { top: 'ภาพยนตร์', topVal: 50, second: 'เกม Soft Power', secondVal: 15, ts: '18 นาทีที่แล้ว' }]
+
+};
+
+/* ── Parse Apps Script JSON response ── */
+function parseRows(rows) {
+  const data = rows.slice(1).filter((r) => r.length > 2);
+  if (data.length === 0) return null;
+  const ids = PROJECTS.map((p) => p.id);
+
+  const averages = {};
+  ids.forEach((id, i) => {
+    const vals = data.map((r) => parseFloat(r[i + 2]) || 0);
+    averages[id] = vals.reduce((s, v) => s + v, 0) / data.length;
+  });
+
+  const welfareIdx = 1; // welfare is index 1 in PROJECTS
+  const welfareGtZero = Math.round(
+    data.filter((r) => (parseFloat(r[welfareIdx + 2]) || 0) > 0).length / data.length * 100
+  );
+
+  const recent = data.slice(-30).reverse().map((row) => {
+    const allocs = {};
+    ids.forEach((id, i) => {allocs[id] = parseFloat(row[i + 2]) || 0;});
+    const sorted = [...PROJECTS].sort((a, b) => allocs[b.id] - allocs[a.id]);
+    return {
+      top: sorted[0].name.slice(0, 16),
+      topVal: Math.round(allocs[sorted[0].id]),
+      second: sorted[1] ? sorted[1].name.slice(0, 16) : '',
+      secondVal: sorted[1] ? Math.round(allocs[sorted[1].id]) : 0,
+      ts: (() => {
+        try {return new Date(row[0]).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });}
+        catch (_) {return '—';}
+      })()
+    };
+  });
+
+  return { count: data.length, averages, welfareGtZero, recent };
+}
+
+/* ── Count-up hook ── */
+function useCountUp(target, duration = 700) {
+  const [val, setVal] = useState(target);
+  const prevRef = useRef(target);
+  useEffect(() => {
+    const from = prevRef.current;
+    prevRef.current = target;
+    if (from === target) return;
+    const start = performance.now();
+    const tick = (now) => {
+      const p = Math.min((now - start) / duration, 1);
+      const e = 1 - Math.pow(1 - p, 3);
+      setVal(Math.round(from + (target - from) * e));
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [target, duration]);
+  return val;
+}
+
+/* ── 5×2 Card Grid ── */
+function CardGrid({ data }) {
+  const avgTotal = useMemo(
+    () => Object.values(data.averages).reduce((s, v) => s + v, 0),
+    [data]
+  );
+  const sorted = useMemo(() =>
+    [...PROJECTS]
+      .map(p => ({ ...p, avg: data.averages[p.id] || 0 }))
+      .sort((a, b) => b.avg - a.avg),
+  [data]);
+
+  return (
+    <div className="cgrid">
+      {sorted.map((p, idx) => {
+        const rank   = idx + 1;
+        const isTop  = rank <= 3;
+        const youPct = avgTotal > 0 ? p.avg / avgTotal * 100 : 0;
+        const govPct = p.real / REAL_TOTAL * 100;
+        return (
+          <div key={p.id} className={`ccard${p.avg === 0 ? ' ccard--zero' : ''}`}>
+            <div className={`cc-rank${isTop ? ' cc-rank--top' : ''}`}>อันดับ {rank}</div>
+            <div className="cc-icon">{p.icon}</div>
+            <div className="cc-name" style={{ fontWeight: isTop ? 700 : 400 }}>{p.name}</div>
+            <div className="cc-agency" style={(() => { const c = AGENCY_COLORS[p.agency] || DEFAULT_AGENCY_COLOR; return { background: c.bg, color: c.color, borderColor: c.border }; })()}>{p.agency}</div>
+            <div className="cc-spacer" />
+            <div className="cc-avg" style={{ color: isTop ? 'var(--or)' : 'var(--tx2)', fontSize: isTop ? '20px' : '17px' }}>
+              {p.avg.toFixed(1)}<span className="cc-avg-u"> M avg</span>
+            </div>
+            <div className="cc-bars">
+              <div className="cc-brow">
+                <span className="cc-bval cbv-or">{youPct.toFixed(1)}%</span>
+                <div className="cc-btrack-v"><div className="cc-bfill-v cbf-or" style={{ height: `${youPct}%` }} /></div>
+                <span className="cc-blbl">ประชาชน</span>
+              </div>
+              <div className="cc-brow">
+                <span className="cc-bval cbv-bl">{p.real === 0 ? '0%' : govPct.toFixed(1)+'%'}</span>
+                <div className="cc-btrack-v"><div className="cc-bfill-v cbf-bl" style={{ height: `${govPct}%` }} /></div>
+                <span className="cc-blbl">งบรัฐ</span>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ── QR Code placeholder (geometric stand-in) ── */
+function QRPlaceholder() {
+  return (
+    <div style={{ padding: 6, display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gap: 2, width: 76, height: 76 }}>
+      {Array.from({ length: 49 }, (_, i) => {
+        // deterministic pattern based on index
+        const on = [0, 1, 2, 3, 4, 5, 6, 7, 13, 14, 20, 21, 27, 28, 34, 35, 41, 42, 43, 44, 45, 46, 47, 48, 8, 15, 22, 29, 36].includes(i) ||
+        Math.sin(i * 13.7 + 3.1) * 100 % 7 > 3.5;
+        return <span key={i} style={{
+          background: on ? 'var(--or)' : 'transparent',
+          borderRadius: 1,
+          opacity: on ? 0.8 : 0
+        }} />;
+      })}
+    </div>);
+
+}
+
+/* ── Main App ── */
+function App() {
+  const [data, setData] = useState(DEMO_DATA);
+  const [isDemo, setIsDemo] = useState(true);
+  const [lastUpdate, setLastUpdate] = useState(new Date());
+  const animCount = useCountUp(data.count);
+
+  const fetchData = useCallback(async () => {
+    try {
+      const res = await fetch(SHEET_JSON_URL + '?t=' + Date.now());
+      const rows = await res.json();
+      const parsed = parseRows(rows);
+      if (parsed) {setData(parsed);setIsDemo(false);}
+    } catch (_) {/* keep current data */}
+    setLastUpdate(new Date());
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+    const iv = setInterval(fetchData, 10000);
+    return () => clearInterval(iv);
+  }, [fetchData]);
+
+  /* top project */
+  const topProject = useMemo(() =>
+  PROJECTS.reduce((best, p) =>
+  (data.averages[p.id] || 0) > (data.averages[best.id] || 0) ? p : best
+  ),
+  [data]);
+
+  /* biggest gap (user % vs govt %) */
+  const gapProject = useMemo(() => {
+    const avgTotal = Object.values(data.averages).reduce((s, v) => s + v, 0);
+    return PROJECTS.map((p) => {
+      const youPct = avgTotal > 0 ? (data.averages[p.id] || 0) / avgTotal * 100 : 0;
+      const govPct = p.real / REAL_TOTAL * 100;
+      return { ...p, youPct, govPct, diff: Math.abs(youPct - govPct) };
+    }).reduce((best, curr) => curr.diff > best.diff ? curr : best);
+  }, [data]);
+
+  const timeStr = lastUpdate.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+  return (
+    <div className="app">
+
+      {/* ── Header ── */}
+      <header className="hdr">
+        <img src="assets/logo-mark-white.png" alt="People's Culture" className="hdr-logo" />
+        <div className="hdr-divider"></div>
+        <div className="hdr-title">
+          ประชาชนจัดสรรงบวัฒนธรรมและเศรษฐกิจสร้างสรรค์อย่างไร
+        </div>
+        <div className="hdr-gap" />
+        <div className="live-badge"><div className="live-dot" />LIVE</div>
+        <div className="hdr-count">
+          <strong>{animCount}</strong>คนร่วมแล้ว
+        </div>
+      </header>
+
+      {/* ── Main ── */}
+      <div className="main">
+
+        {/* Left — chart */}
+        <div className="panel-l">
+          <div className="panel-title">ประชาชน<em>จัดงบ</em>อย่างไร?</div>
+          <div className="panel-sub">
+            ค่าเฉลี่ยจาก {data.count} คน (% ของงบรวม) เทียบกับงบประมาณจริงปี 2569
+          </div>
+          <CardGrid data={data} />
+        </div>
+
+        {/* Right — stats */}
+        <div className="panel-r">
+
+          {/* Top project */}
+          <div>
+            <div className="stat-lbl">โครงการที่ได้รับงบสูงสุด</div>
+            <div className="sc-or">
+              <div className="top1-row">
+                <span className="top1-icon">{topProject.icon}</span>
+                <span className="top1-name">{topProject.name}</span>
+              </div>
+              <div className="top1-val">
+                {(data.averages[topProject.id] || 0).toFixed(1)} ล้านบาท
+              </div>
+            </div>
+          </div>
+
+          {/* Biggest gap */}
+          <div>
+            <div className="stat-lbl">Insight ประชาชน vs รัฐ</div>
+            <div className="sc">
+              <div className="gap-name">{gapProject.icon} {gapProject.name}</div>
+              <div className="gap-vs">
+                <div className="gap-side">
+                  <div className="gap-who">ประชาชนให้เฉลี่ย</div>
+                  <div className="gap-n gn-or">{(data.averages[gapProject.id] || 0).toFixed(1)}M</div>
+                </div>
+                <div className="gap-sep">vs</div>
+                <div className="gap-side">
+                  <div className="gap-who">รัฐจัดสรร</div>
+                  <div className="gap-n gn-gr">{gapProject.real}M</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Welfare stat — political statement */}
+          <div>
+            <div className="stat-lbl">สวัสดิการศิลปินอิสระ — งบรัฐ: 0 บาท</div>
+            <div className="sc">
+              <div className="wf-pct">{data.welfareGtZero}%</div>
+              <div className="wf-sub">
+                ของผู้ร่วมกิจกรรม ให้งบสวัสดิการศิลปิน<br />
+                ขณะที่งบประมาณจริงปี 2569 จัดสรร 0 บาท
+              </div>
+            </div>
+          </div>
+
+          {/* Recent */}
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+            <div className="stat-lbl">ผู้ร่วมล่าสุด</div>
+            <div className="rec-list">
+              {(data.recent || []).map((r, i) =>
+              <div key={i} className={`rec-item new-item${i === 0 ? ' rec-first' : ''}`} style={{ animationDelay: `${i * 0.07}s` }}>
+                  <div className="rec-top">
+                    {i === 0
+                      ? <>ให้ <span className="rec-highlight">{r.top}</span> <span className="rec-amount">{r.topVal}M</span> · <span className="rec-highlight" style={{fontSize:13}}>{r.second}</span> <span className="rec-amount">{r.secondVal}M</span></>
+                      : <>ให้ {r.top} {r.topVal}M · {r.second} {r.secondVal}M</>
+                    }
+                  </div>
+                  <div className="rec-time">{r.ts}</div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* QR — removed from right panel, now in footer */}
+
+        </div>
+      </div>
+
+      {/* ── Footer ── */}
+      <footer className="footer">
+        <div className="footer-qr">
+          <img
+            src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(BOOTH_URL)}&bgcolor=131210&color=FF6A14&margin=2`}
+            alt="QR"
+            onError={(e) => { e.target.style.display='none'; }}
+          />
+        </div>
+        <div className="footer-qr-info">
+          <span className="footer-scan">สแกน QR เพื่อเล่น</span>
+          <span className="footer-url">{BOOTH_URL}</span>
+        </div>
+        <div className="footer-gap" />
+        {isDemo && <span className="footer-demo">DEMO DATA</span>}
+        <span className="footer-updated">อัปเดต {timeStr} · ทุก 10 วินาที</span>
+      </footer>
+
+    </div>);
+
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

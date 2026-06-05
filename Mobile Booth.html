@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Decision Booth — ถ้าคุณเป็น รมว.วัฒนธรรม</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    @font-face { font-family:"Anakotmai"; src:url("fonts/anakotmai-light.woff2") format("woff2"); font-weight:300; font-display:swap; }
+    @font-face { font-family:"Anakotmai"; src:url("fonts/anakotmai-medium.woff2") format("woff2"); font-weight:500; font-display:swap; }
+    @font-face { font-family:"Anakotmai"; src:url("fonts/anakotmai-bold.woff2") format("woff2"); font-weight:700; font-display:swap; }
+
+    :root {
+      --bg:#0B0A08; --s1:#131210; --s2:#1D1C19; --s3:#252320;
+      --bd:rgba(255,255,255,0.07); --bdo:rgba(255,106,20,0.28);
+      --or:#FF6A14; --or-dim:rgba(255,106,20,0.10); --glow:0 0 22px rgba(255,106,20,0.28);
+      --tx:#EDE9E3; --tx2:#7A766D; --tx3:#45433E;
+      --red:#FF453A;
+      --blue:#4076FA;
+      --f:"Anakotmai","IBM Plex Sans Thai",system-ui,sans-serif;
+      --mono:"JetBrains Mono",monospace;
+      --ease:cubic-bezier(0.22,1,0.36,1);
+    }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    html, body {
+      background:var(--bg); color:var(--tx); font-family:var(--f);
+      font-weight:300; -webkit-font-smoothing:antialiased; min-height:100vh; overflow-x:hidden;
+    }
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none;
+      background-image:radial-gradient(circle,rgba(255,106,20,0.06) 1px,transparent 1px);
+      background-size:28px 28px; z-index:0;
+    }
+    #root { min-height:100vh; position:relative; z-index:1; }
+    .page { max-width:430px; margin:0 auto; min-height:100vh; }
+    .pop { animation:popIn .38s var(--ease) both; }
+    @keyframes popIn { from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);} }
+
+    /* ── INTRO ── */
+    .intro { min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:52px 28px; }
+    .eyebrow {
+      font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+      color:var(--or); margin-bottom:20px; display:flex; align-items:center; gap:8px;
+    }
+    .big-title { font-weight:700; font-size:clamp(42px,12vw,62px); line-height:1.04; letter-spacing:-.025em; }
+    .big-title em { color:var(--or); font-style:normal; }
+    .rule { width:40px; height:2px; background:var(--or); margin:26px 0; }
+    .intro-desc { font-size:16px; font-weight:300; line-height:1.7; color:var(--tx2); margin-bottom:44px; }
+    .intro-desc strong { color:var(--tx); font-weight:500; }
+    .intro-note { font-size:12px; color:var(--tx3); margin-top:14px; line-height:1.6; }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display:flex; align-items:center; justify-content:center; gap:8px;
+      font-family:var(--f); font-size:16px; font-weight:500;
+      padding:16px 24px; border-radius:4px; border:none; cursor:pointer; width:100%;
+      transition:all 120ms var(--ease);
+    }
+    .btn:active { transform:scale(0.97); }
+    .btn-or { background:var(--or); color:#fff; box-shadow:var(--glow); }
+    .btn-or:hover { background:#FA4C05; }
+    .btn-or:disabled { opacity:.32; cursor:not-allowed; box-shadow:none; }
+    .btn-ghost { background:transparent; color:var(--tx2); border:1px solid var(--bd); }
+    .btn-ghost:hover { border-color:var(--bdo); color:var(--tx); }
+    .btn-sm { padding:12px 20px; font-size:14px; }
+
+    /* ── PLAY HEADER ── */
+    .ph {
+      position:sticky; top:0; z-index:20;
+      background:rgba(11,10,8,.94); backdrop-filter:blur(14px);
+      -webkit-backdrop-filter:blur(14px);
+      border-bottom:1px solid var(--bd); padding:14px 20px 12px;
+    }
+    .ph-label { font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--tx3); margin-bottom:3px; }
+    .ph-row { display:flex; align-items:baseline; gap:7px; }
+    .ph-num { font-family:var(--mono); font-size:42px; font-weight:600; line-height:1; transition:color .2s; }
+    .ph-ok { color:var(--or); }
+    .ph-over { color:var(--red); }
+    .ph-unit { font-size:13px; color:var(--tx2); }
+    .ph-bar { height:2px; background:var(--s2); border-radius:1px; overflow:hidden; margin-top:10px; }
+    .ph-fill { height:100%; border-radius:1px; transition:width .15s var(--ease), background .2s; }
+
+    /* ── SQUARE CARD GRID ── */
+    .proj-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; padding:12px 12px 140px; }
+    .sq-card {
+      aspect-ratio:1; background:var(--s1); border:1px solid var(--bd);
+      border-radius:12px; display:flex; flex-direction:column;
+      align-items:center; justify-content:center; gap:6px;
+      cursor:pointer; padding:10px 8px; text-align:center;
+      transition:border-color .15s, background .15s, transform .1s;
+      position:relative;
+    }
+    .sq-card:active { transform:scale(0.94); }
+    .sq-card--active { border-color:var(--bdo); background:rgba(255,106,20,0.07); }
+    .sq-icon { font-size:26px; line-height:1; }
+    .sq-name {
+      font-size:10px; font-weight:500; color:var(--tx2); line-height:1.35;
+      display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+    }
+    .sq-card--active .sq-name { color:var(--tx); }
+    .sq-alloc {
+      position:absolute; top:6px; right:6px;
+      background:var(--or); color:#fff;
+      font-family:var(--mono); font-size:9px; font-weight:600;
+      padding:2px 5px; border-radius:3px; line-height:1.3;
+    }
+
+    /* ── SUBMIT BAR ── */
+    .sbar {
+      position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+      width:100%; max-width:430px; padding:12px 14px 28px;
+      background:linear-gradient(to top,var(--bg) 62%,transparent); z-index:20;
+    }
+    .sbar-info { text-align:center; font-size:11px; color:var(--tx3); margin-bottom:8px; font-family:var(--mono); }
+
+    /* ── BOTTOM SHEET (project popup) ── */
+    .sheet-overlay {
+      position:fixed; inset:0; background:rgba(11,10,8,0.75); z-index:40;
+      display:flex; align-items:flex-end; justify-content:center;
+    }
+    .sheet {
+      background:var(--s2); border-radius:16px 16px 0 0;
+      padding:12px 24px 44px; width:100%; max-width:430px;
+      animation:sheetUp .3s var(--ease) both;
+    }
+    @keyframes sheetUp { from{transform:translateY(100%);}to{transform:translateY(0);} }
+    .sheet-handle { width:36px; height:4px; background:var(--bd); border-radius:2px; margin:0 auto 22px; }
+    .sheet-icon { font-size:36px; margin-bottom:6px; text-align:center; }
+    .sheet-name { font-size:18px; font-weight:700; text-align:center; margin-bottom:3px; }
+    .sheet-agency { font-size:11px; color:var(--tx3); text-align:center; margin-bottom:20px; }
+    .sheet-val-row { display:flex; align-items:baseline; justify-content:center; gap:5px; margin-bottom:4px; }
+    .sheet-val { font-family:var(--mono); font-size:52px; font-weight:600; color:var(--or); line-height:1; }
+    .sheet-val--zero { color:var(--tx3); }
+    .sheet-val-unit { font-size:16px; color:var(--tx2); }
+    .sheet-max { font-size:11px; color:var(--tx3); text-align:center; margin-bottom:14px; }
+    .sheet-actions { display:grid; grid-template-columns:1fr 2fr; gap:8px; margin-top:20px; }
+
+    /* Slider (same styles) */
+    input[type=range] { -webkit-appearance:none; appearance:none; width:100%; height:4px; border-radius:2px; outline:none; cursor:pointer; }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance:none; width:32px; height:32px; border-radius:50%;
+      background:var(--or); cursor:pointer;
+      box-shadow:0 0 0 4px rgba(255,106,20,.16); transition:box-shadow .15s;
+    }
+    input[type=range]:active::-webkit-slider-thumb { box-shadow:0 0 0 7px rgba(255,106,20,.20), var(--glow); }
+    input[type=range]::-moz-range-thumb { width:32px; height:32px; border-radius:50%; background:var(--or); border:none; }
+    input[type=range]::-moz-range-progress { background:var(--or); height:4px; border-radius:2px; }
+    input[type=range]::-moz-range-track { background:var(--s2); height:4px; border-radius:2px; }
+
+    /* ── BUDGET FULL MODAL ── */
+    .bfm-overlay {
+      position:fixed; inset:0; background:rgba(11,10,8,0.88); z-index:60;
+      display:flex; align-items:flex-end; justify-content:center;
+    }
+    .bfm {
+      background:var(--s2); border-top:2px solid var(--or);
+      padding:28px 24px 48px; width:100%; max-width:430px;
+      text-align:center; animation:sheetUp .3s var(--ease) both;
+    }
+    .bfm-icon { font-size:36px; color:var(--or); margin-bottom:12px; }
+    .bfm-title { font-size:22px; font-weight:700; margin-bottom:8px; }
+    .bfm-sub { font-size:14px; color:var(--tx2); margin-bottom:24px; line-height:1.6; }
+    .bfm-actions { display:flex; flex-direction:column; gap:8px; }
+
+    /* ── SENDING OVERLAY ── */
+    .overlay {
+      position:fixed; inset:0; background:rgba(11,10,8,.92);
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      gap:16px; z-index:80;
+    }
+    .spinner { width:36px; height:36px; border:2px solid var(--s2); border-top-color:var(--or); border-radius:50%; animation:spin .8s linear infinite; }
+    @keyframes spin { to{transform:rotate(360deg);} }
+
+    /* ── RESULTS ── */
+    .results { padding:0 16px 110px; }
+    .r-top { text-align:center; padding:36px 16px 28px; border-bottom:1px solid var(--bd); margin-bottom:24px; }
+    .r-check { width:52px; height:52px; border-radius:50%; background:var(--or-dim); border:1px solid var(--bdo); display:flex; align-items:center; justify-content:center; margin:0 auto 14px; font-size:20px; color:var(--or); }
+    .r-title { font-size:24px; font-weight:700; margin-bottom:8px; }
+    .r-sub { font-size:13px; color:var(--tx2); line-height:1.65; }
+    .r-sub strong { color:var(--tx); font-weight:500; }
+    .sec-lbl { font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--tx3); margin-bottom:10px; }
+
+    /* rank list */
+    .ranklist { display:flex; flex-direction:column; gap:5px; margin-bottom:22px; }
+    .ri { display:flex; align-items:center; gap:10px; background:var(--s1); border:1px solid var(--bd); border-radius:6px; padding:11px 13px; }
+    .ri-n { font-family:var(--mono); font-size:11px; font-weight:600; color:var(--or); min-width:18px; }
+    .ri-ic { font-size:17px; }
+    .ri-nm { flex:1; font-size:13px; font-weight:500; }
+    .ri-vl { font-family:var(--mono); font-size:15px; font-weight:600; }
+    .vl-on { color:var(--or); }
+    .vl-off { color:var(--tx3); }
+
+    /* insight */
+    .insight { background:var(--s1); border:1px solid var(--bdo); border-radius:8px; padding:14px 15px; margin-bottom:22px; }
+    .insight-lbl { font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--or); margin-bottom:7px; }
+    .insight-txt { font-size:13px; line-height:1.65; color:var(--tx2); }
+    .insight-txt strong { color:var(--tx); font-weight:500; }
+
+    /* 3-column comparison table */
+    .cmp-table { margin-bottom:24px; }
+    .cmp-head {
+      display:grid; grid-template-columns:1fr 44px 56px;
+      gap:6px; padding:5px 2px;
+      font-size:9px; font-weight:700; letter-spacing:.07em; text-transform:uppercase;
+      color:var(--tx3); border-bottom:1px solid var(--bd); margin-bottom:2px;
+    }
+    .cmp-head span:nth-child(2), .cmp-head span:nth-child(3) { text-align:right; }
+    .cmp-row {
+      display:grid; grid-template-columns:1fr 44px 56px;
+      gap:6px; padding:8px 2px;
+      border-bottom:1px solid rgba(255,255,255,0.04);
+      align-items:center;
+    }
+    .cmp-proj { font-size:12px; color:var(--tx2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .cmp-you { font-family:var(--mono); font-size:14px; font-weight:600; text-align:right; }
+    .cmp-you--on { color:var(--or); }
+    .cmp-you--off { color:var(--tx3); }
+    .cmp-govt { font-family:var(--mono); font-size:12px; color:var(--blue); text-align:right; }
+
+    ::-webkit-scrollbar { width:3px; }
+    ::-webkit-scrollbar-thumb { background:var(--s2); border-radius:2px; }
+  </style>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useMemo, useCallback, useEffect, useRef } = React;
+
+const APPS_SCRIPT_URL = 'APPS_SCRIPT_URL';
+const MAX = 100;
+const REAL_TOTAL = 3855;
+
+const PROJECTS = [
+  { id:'film',     icon:'🎬', name:'ทุนหนัง/ซีรีส์/แอนิเมชัน',    agency:'กรมส่งเสริมวัฒนธรรม',        real:104  },
+  { id:'welfare',  icon:'🛡️', name:'ทุนตรง/สวัสดิการศิลปินอิสระ', agency:'ไม่มีหน่วยงานรับผิดชอบ',     real:0    },
+  { id:'music',    icon:'🎵', name:'ดนตรีและ Music Awards',         agency:'กรมส่งเสริมวัฒนธรรม',        real:43   },
+  { id:'game',     icon:'🎮', name:'เกม Soft Power ไทย',            agency:'กรมส่งเสริมวัฒนธรรม',        real:37   },
+  { id:'perform',  icon:'🎭', name:'พื้นที่ศิลปะการแสดง',           agency:'กรมส่งเสริมวัฒนธรรม',        real:33   },
+  { id:'book',     icon:'📚', name:'หนังสือและวรรณกรรม',            agency:'กรมส่งเสริมวัฒนธรรม',        real:45   },
+  { id:'cea',      icon:'🏙️', name:'เศรษฐกิจสร้างสรรค์ (CEA)',     agency:'สำนักนายกรัฐมนตรี',           real:566  },
+  { id:'heritage', icon:'🏛️', name:'โบราณสถานและมรดกวัฒนธรรม',     agency:'กรมศิลปากร',                 real:2809 },
+  { id:'forum',    icon:'🎪', name:'Soft Power Forum นานาชาติ',     agency:'กรมส่งเสริมวัฒนธรรม',        real:77   },
+  { id:'archive',  icon:'🎞️', name:'หอภาพยนตร์แห่งชาติ',           agency:'หอภาพยนตร์ (องค์การมหาชน)', real:141  },
+];
+
+function genId() { return 'sess-' + Math.random().toString(36).slice(2,11); }
+const SESSION_ID = genId();
+
+/* ── Project Popup (bottom sheet) ── */
+function ProjectSheet({ project, value, remaining, onSave, onClose }) {
+  const [local, setLocal] = useState(value);
+  const sliderMax = value + remaining; // can increase by up to remaining
+  const pct = sliderMax > 0 ? (local / sliderMax) * 100 : 0;
+  const track = `linear-gradient(to right,#FF6A14 ${pct}%,#1D1C19 ${pct}%)`;
+
+  return (
+    <div className="sheet-overlay" onClick={onClose}>
+      <div className="sheet" onClick={e => e.stopPropagation()}>
+        <div className="sheet-handle" />
+        <div className="sheet-icon">{project.icon}</div>
+        <div className="sheet-name">{project.name}</div>
+        <div className="sheet-agency">{project.agency}</div>
+        <div className="sheet-val-row">
+          <span className={`sheet-val ${local === 0 ? 'sheet-val--zero' : ''}`}>{local}</span>
+          <span className="sheet-val-unit">ล้านบาท</span>
+        </div>
+        <div className="sheet-max">
+          {sliderMax < MAX
+            ? `จัดสรรได้สูงสุด ${sliderMax}M (งบเหลือ ${remaining}M)`
+            : `จัดสรรได้สูงสุด ${MAX}M`}
+        </div>
+        <input
+          type="range" min="0" max={sliderMax} step="5" value={local}
+          style={{ background: track }}
+          aria-label={project.name}
+          onChange={e => setLocal(parseInt(e.target.value))}
+        />
+        <div className="sheet-actions">
+          <button className="btn btn-ghost btn-sm" onClick={onClose}>ยกเลิก</button>
+          <button className="btn btn-or btn-sm" onClick={() => onSave(project.id, local)}>บันทึก</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Budget Full Modal ── */
+function BudgetFullModal({ onSubmit, onEdit }) {
+  return (
+    <div className="bfm-overlay">
+      <div className="bfm">
+        <div className="bfm-icon">✓</div>
+        <div className="bfm-title">งบครบ 100 ล้านบาทแล้ว!</div>
+        <div className="bfm-sub">
+          พร้อมส่งคำตอบ<br/>หรือจะกลับไปแก้ไขงบก่อน?
+        </div>
+        <div className="bfm-actions">
+          <button className="btn btn-or" onClick={onSubmit}>ส่งคำตอบ →</button>
+          <button className="btn btn-ghost" onClick={onEdit}>แก้ไขงบใหม่</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Page 0 — Intro ── */
+function IntroPage({ onStart }) {
+  return (
+    <div className="intro pop">
+      <div className="eyebrow">มาลองจัดสรรงบประมาณวัฒนธรรมและเศรษฐกิจสร้างสรรค์กัน</div>
+      <h1 className="big-title">
+        ถ้าคุณ<br/>เป็น<br/><em>รมว.</em><br/>วัฒนธรรม
+      </h1>
+      <div className="rule"></div>
+      <p className="intro-desc">
+        หากคุณมีงบ <strong>100 ล้านบาท</strong> คุณจะจัดสรรโครงการวัฒนธรรมอย่างไร
+        <br/>(เปรียบเทียบจากงบรัฐปี 2569)
+      </p>
+      <button className="btn btn-or" onClick={onStart}>เริ่มจัดสรรงบ →</button>
+      <p className="intro-note" data-comment-anchor="intro-note">
+        ตัวเลือกของคุณจะแชร์ยัง หน้าจอกลาง ที่งาน<br/>
+        <strong>แฮกงบ วัฒนธรรม 70</strong> วันที่ 27 มิ.ย. นี้ ที่พรรคประชาชน
+      </p>
+    </div>
+  );
+}
+
+/* ── Page 1 — Play (Square Grid) ── */
+function PlayPage({ alloc, onChange, onSubmit, sending }) {
+  const total    = useMemo(() => Object.values(alloc).reduce((s,v) => s+v, 0), [alloc]);
+  const remaining = MAX - total;
+  const isOver   = total > MAX;
+  const pct      = Math.min((total / MAX) * 100, 100);
+
+  const [openId, setOpenId]             = useState(null);
+  const [showBudgetFull, setBudgetFull] = useState(false);
+  const prevTotal = useRef(total);
+
+  useEffect(() => {
+    if (total >= MAX && prevTotal.current < MAX) setBudgetFull(true);
+    prevTotal.current = total;
+  }, [total]);
+
+  const handleSave = useCallback((id, val) => {
+    const others = Object.entries(alloc).filter(([k]) => k !== id).reduce((s,[,v]) => s+v, 0);
+    onChange(id, Math.max(0, Math.min(val, MAX - others)));
+    setOpenId(null);
+  }, [alloc, onChange]);
+
+  const openProject = openId ? PROJECTS.find(p => p.id === openId) : null;
+
+  return (
+    <div className="pop">
+      {sending && (
+        <div className="overlay">
+          <div className="spinner"></div>
+          <span style={{color:'var(--tx2)',fontSize:13}}>กำลังส่งผลลัพธ์...</span>
+        </div>
+      )}
+
+      {showBudgetFull && (
+        <BudgetFullModal
+          onSubmit={() => { setBudgetFull(false); onSubmit(); }}
+          onEdit={() => setBudgetFull(false)}
+        />
+      )}
+
+      {openProject && (
+        <ProjectSheet
+          project={openProject}
+          value={alloc[openId]}
+          remaining={remaining}
+          onSave={handleSave}
+          onClose={() => setOpenId(null)}
+        />
+      )}
+
+      <div className="ph">
+        <div className="ph-label">งบคงเหลือ</div>
+        <div className="ph-row">
+          <span className={`ph-num ${isOver ? 'ph-over' : 'ph-ok'}`}>{remaining}</span>
+          <span className="ph-unit">ล้านบาท</span>
+        </div>
+        <div className="ph-bar">
+          <div className="ph-fill" style={{width:`${pct}%`, background: isOver ? 'var(--red)' : 'var(--or)'}} />
+        </div>
+      </div>
+
+      <div className="proj-grid">
+        {PROJECTS.map(p => {
+          const v = alloc[p.id];
+          return (
+            <button
+              key={p.id}
+              className={`sq-card ${v > 0 ? 'sq-card--active' : ''}`}
+              onClick={() => setOpenId(p.id)}
+              aria-label={p.name}
+            >
+              {v > 0 && <span className="sq-alloc">{v}M</span>}
+              <span className="sq-icon">{p.icon}</span>
+              <span className="sq-name">{p.name}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="sbar">
+        <div className="sbar-info">{total}M / {MAX}M จัดสรรแล้ว</div>
+        <button
+          className="btn btn-or"
+          disabled={total === 0 || sending}
+          onClick={() => onSubmit()}
+        >
+          {sending ? 'กำลังส่ง...' : 'ส่งคำตอบ →'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ── Page 2 — Results ── */
+function ResultsPage({ alloc, onReset }) {
+  const total = Object.values(alloc).reduce((s,v) => s+v, 0);
+
+  const sorted = useMemo(() =>
+    [...PROJECTS].map(p => ({...p, a: alloc[p.id]})).sort((a,b) => b.a - a.a),
+  [alloc]);
+
+  const insight = useMemo(() => {
+    const sorted = [...PROJECTS]
+      .map(p => ({...p, a: alloc[p.id] || 0}))
+      .sort((a, b) => b.a - a.a);
+    const top      = sorted[0];
+    const second   = sorted[1];
+    const welfareA  = alloc['welfare']  || 0;
+    const heritageA = alloc['heritage'] || 0;
+    const govHerPct = Math.round((2809 / REAL_TOTAL) * 100);          // 72%
+    const userTopPct = total > 0 ? Math.round((top.a / total) * 100) : 0;
+    const userHerPct = total > 0 ? Math.round((heritageA / total) * 100) : 0;
+    const zeroed     = sorted.filter(p => p.a === 0).length;
+    const govTopPct  = Math.round((top.real / REAL_TOTAL) * 100);
+
+    // 1 · ให้งบสวัสดิการ (รัฐ = 0) — ชัดที่สุด
+    if (welfareA >= 10) return (
+      <>คุณจัดสรร <strong>{welfareA}M</strong> ให้สวัสดิการศิลปินอิสระ — นโยบายที่<strong>รัฐไม่มีงบรองรับเลย</strong>ในปี 2569 นี่คือจุดแตกต่างที่ชัดที่สุดระหว่างคุณกับนโยบายจริง</>
+    );
+
+    // 3 · เห็นด้วยกับรัฐเรื่องโบราณสถาน
+    if (userHerPct >= 40) return (
+      <>คุณให้งบโบราณสถาน <strong>{heritageA}M</strong> ({userHerPct}%) ใกล้เคียงกับที่รัฐจัดสรรจริง — แสดงว่าคุณให้ความสำคัญกับ<strong>มรดกวัฒนธรรม</strong>ในระดับสูง</>
+    );
+
+    // 4 · top pick คือสิ่งที่รัฐ underfund มาก
+    if (userTopPct - govTopPct > 20) return (
+      <>คุณทุ่ม <strong>{top.a}M</strong> ให้ "{top.name}" มากที่สุด — ขณะที่รัฐใช้ที่นี่เพียง <strong>{top.real}M</strong> ({govTopPct}% ของงบ) คุณเห็นคุณค่าตรงนี้ต่างจากนโยบายจริง</>
+    );
+
+    // 5 · กระจายงบไปหลายที่ (top + second ต่างกันไม่มาก)
+    if (second && top.a > 0 && (top.a - second.a) <= 10) return (
+      <>คุณกระจายงบให้ "{top.name}" และ "{second.name}" เท่าๆ กัน — แสดงว่าคุณไม่อยากเลือกอุตสาหกรรมใดเป็นพิเศษ แต่ต้องการลงทุนในหลายด้านพร้อมกัน</>
+    );
+
+    // 6 · default: บอก top pick และสิ่งที่ไม่ได้ให้
+    return (
+      <>คุณให้ความสำคัญสูงสุดกับ "<strong>{top.name}</strong>" ({top.a}M) และไม่จัดสรรให้ <strong>{zeroed} โครงการ</strong> — ลองเทียบกับที่คนอื่นในงานเลือกด้วย</>
+    );
+  }, [alloc, total]);
+
+  return (
+    <div className="results pop">
+      <div className="r-top">
+        <div className="r-check">✓</div>
+        <div className="r-title">จัดสรรงบแล้ว!</div>
+        <div className="r-sub">
+          หากอยากรู้ว่างบ 70 จะเป็นยังไง อย่าลืมมาร่วมกัน<br/>
+          <strong>แฮกงบวัฒนธรรม 70</strong><br/>
+          วันที่ 27 มิ.ย. นี้ ที่พรรคประชาชน<br/>
+          ตั้งแต่เวลา 9.00 - 17.00 น.<br/>
+          <span style={{color:'var(--tx)'}}>ผลการจัดสรรงบของทุกคนก็จะจัดแสดงในงานด้วยน้าาา</span>
+        </div>
+      </div>
+
+      <div className="sec-lbl">{sorted.filter(p => p.a > 0).length >= 5 ? 'การจัดสรรของคุณ — Top 5' : 'การจัดสรรของคุณ'}</div>
+      <div className="ranklist">
+        {sorted.filter(p => p.a > 0).slice(0,5).map((p, i) => (
+          <div key={p.id} className="ri">
+            <span className="ri-n">#{i+1}</span>
+            <span className="ri-ic">{p.icon}</span>
+            <span className="ri-nm">{p.name}</span>
+            <span className={`ri-vl ${p.a > 0 ? 'vl-on' : 'vl-off'}`}>{p.a}M</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="insight">
+        <div className="insight-lbl">Insight</div>
+        <div className="insight-txt">{insight}</div>
+      </div>
+
+      <div className="sec-lbl">เปรียบกับงบรัฐ 2569</div>
+      <div className="cmp-table">
+        <div className="cmp-head">
+          <span>โครงการ</span>
+          <span style={{textAlign:'right'}}>คุณ</span>
+          <span style={{textAlign:'right'}}>งบรัฐ</span>
+        </div>
+        {sorted.map(p => (
+          <div key={p.id} className="cmp-row">
+            <span className="cmp-proj">{p.icon} {p.name.length > 16 ? p.name.slice(0,15)+'…' : p.name}</span>
+            <span className={`cmp-you ${p.a > 0 ? 'cmp-you--on' : 'cmp-you--off'}`}>{p.a}M</span>
+            <span className="cmp-govt">{p.real}M</span>
+          </div>
+        ))}
+      </div>
+
+      <button className="btn btn-ghost" onClick={onReset}>เล่นอีกครั้ง</button>
+    </div>
+  );
+}
+
+/* ── App ── */
+function App() {
+  const [page, setPage]       = useState(0);
+  const [alloc, setAlloc]     = useState(() => Object.fromEntries(PROJECTS.map(p => [p.id, 0])));
+  const [sending, setSending] = useState(false);
+
+  const handleChange = useCallback((id, val) => setAlloc(prev => ({...prev, [id]: val})), []);
+
+  const handleSubmit = async () => {
+    setSending(true);
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          timestamp: new Date().toISOString(),
+          session_id: SESSION_ID,
+          ...alloc,
+          total: Object.values(alloc).reduce((s,v) => s+v, 0),
+        }),
+      });
+    } catch(_) { /* fallback gracefully */ }
+    setSending(false);
+    setPage(2);
+  };
+
+  const handleReset = () => {
+    setAlloc(Object.fromEntries(PROJECTS.map(p => [p.id, 0])));
+    setPage(0);
+  };
+
+  return (
+    <div className="page">
+      {page === 0 && <IntroPage onStart={() => setPage(1)} />}
+      {page === 1 && <PlayPage alloc={alloc} onChange={handleChange} onSubmit={handleSubmit} sending={sending} />}
+      {page === 2 && <ResultsPage alloc={alloc} onReset={handleReset} />}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
