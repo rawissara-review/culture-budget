@@ -231,7 +231,7 @@
 
 const { useState, useMemo, useCallback, useEffect, useRef } = React;
 
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbywO-O9qzJLcaC3g3Fw2JUtlCTIINuID4uCf6D9x_eAhzk17X7_Xe9Whm96bCGvXtIV/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzMtmWlxXNTywR1iwhSoQdFX0_u_atrsM0P74qjEpEnmn2VB8WALPMKJR7j08Q6-TM1/exec';
 const MAX = 100;
 const REAL_TOTAL = 3855;
 
@@ -455,51 +455,42 @@ function ResultsPage({ alloc, onReset }) {
     const creativeSum = ['film','music','game','perform','book'].reduce((acc,id) => acc+(alloc[id]||0), 0);
     const creativePct = total > 0 ? Math.round(creativeSum / total * 100) : 0;
 
-    // 0 · ให้เท่ากันทุกโครงการ
+    // 0 · ทุกโครงการเท่ากัน
     if (allEq) {
       const n = nonZeroS.length;
       const v = nonZeroS[0].a;
-      return <>คุณให้ทุก <strong>{n} โครงการ</strong> เท่ากันที่ <strong>{v}M</strong> ต่อโครงการ — มองว่าทุกด้านสำคัญพอกัน ขณะที่รัฐกระจุก <strong>73%</strong> ไว้ที่โบราณสถานเพียงด้านเดียว</>;
+      return <>คุณมองเห็นว่าทุก <strong>{n} ด้าน</strong>สำคัญพอกัน — ปัจจุบัน <strong>73%</strong> ของงบวัฒนธรรมอยู่ที่โบราณสถานเพียงด้านเดียว</>;
     }
 
-    // 1 · ให้สวัสดิการ (รัฐ = 0)
+    // 1 · ให้สวัสดิการ (รัฐ = 0) — คงเดิม
     if (welfareA >= 10) return (
       <>คุณจัดสรร <strong>{welfareA}M</strong> ให้สวัสดิการศิลปินอิสระ — นโยบายที่<strong>รัฐไม่มีงบรองรับเลย</strong>ในปี 2569 นี่คือจุดแตกต่างที่ชัดที่สุดระหว่างคุณกับนโยบายจริง</>
     );
 
-    // 2 · ไม่ให้โบราณสถานเลย
-    if (heritageA === 0) return (
-      <>คุณไม่ให้งบโบราณสถานเลย ทั้งที่รัฐใช้ <strong>73%</strong> ไปที่นี่ — คุณเลือกให้เงินถึง<strong>มือนักสร้างสรรค์โดยตรง</strong>มากกว่าอนุรักษ์สิ่งที่มีอยู่</>
-    );
+    // 2 · CEA สูง
+    if (ceaA >= 40) {
+      const govPct = Math.round(566/REAL_TOTAL*100);
+      return <>คุณเชื่อว่า <strong>Creative Economy</strong> คืออนาคต — งบปี 2569 รัฐให้ไป <strong>{govPct}%</strong> เท่านั้น</>;
+    }
 
-    // 3 · ทุ่ม CEA มาก
-    if (ceaA >= 40) return (
-      <>คุณลงทุนใน<strong>เศรษฐกิจสร้างสรรค์ (CEA)</strong> {ceaA}M ({ceaPct}%) — รัฐให้ที่นี่ {Math.round(566 / REAL_TOTAL * 100)}% คุณเชื่อว่า Creative Economy คือ<strong>อนาคตของวัฒนธรรม</strong></>
-    );
-
-    // 4 · ทุ่มอุตสาหกรรมสร้างสรรค์รวมกัน
-    if (creativePct >= 55) return (
-      <>คุณทุ่ม <strong>{creativeSum}M ({creativePct}%)</strong> ให้หนัง ดนตรี เกม การแสดง และหนังสือรวมกัน — ขณะที่รัฐให้อุตสาหกรรมเหล่านี้รวมกันเพียง <strong>{Math.round((104+43+37+33+45) / REAL_TOTAL * 100)}%</strong></>
-    );
-
-    // 5 · เห็นด้วยกับรัฐเรื่องโบราณสถาน
+    // 3 · เห็นด้วยกับรัฐเรื่องโบราณสถาน
     if (userHerPct >= 40) return (
-      <>คุณให้งบโบราณสถาน <strong>{heritageA}M</strong> ({userHerPct}%) ใกล้เคียงกับที่รัฐจัดสรรจริง — แสดงว่าคุณให้ความสำคัญกับ<strong>มรดกวัฒนธรรม</strong>ในระดับสูง</>
+      <>คุณเห็นในคุณค่า<strong>มรดกวัฒนธรรม</strong> ซึ่งใกล้เคียงกับสัดส่วนที่งบปี 2569 วางไว้ (<strong>2,809 ล้านบาท</strong> หรือ <strong>73%</strong> ของงบ)</>
     );
 
-    // 6 · top pick ต่างจากรัฐมาก
+    // 4 · top pick ต่างจากรัฐมาก
     if (userTopPct - govTopPct > 20) return (
-      <>คุณทุ่ม <strong>{top.a}M</strong> ให้ "{top.name}" มากที่สุด — ขณะที่รัฐใช้ที่นี่เพียง <strong>{top.real}M</strong> ({govTopPct}%) คุณเห็นคุณค่าตรงนี้ต่างจากนโยบายจริง</>
+      <>คุณเลือก <strong>{top.name}</strong> เป็นอันดับหนึ่ง — ขณะที่งบปี 2569 รัฐให้ที่นี่เพียง <strong>{top.real}M</strong> หรือ <strong>{govTopPct}%</strong> ของงบ</>
     );
 
-    // 7 · กระจายใกล้เคียงกัน
+    // 5 · กระจายใกล้เคียงกัน → เหมือน case 0
     if (second && top.a > 0 && top.a - second.a <= 10) return (
-      <>คุณกระจายงบให้ "{top.name}" และ "{second.name}" ใกล้เคียงกัน — ไม่อยากให้อุตสาหกรรมใดได้เปรียบ แต่ต้องการ<strong>ลงทุนพร้อมกันหลายด้าน</strong></>
+      <>คุณมองเห็นว่าหลายด้านสำคัญพอกัน — ปัจจุบัน <strong>73%</strong> ของงบวัฒนธรรมอยู่ที่โบราณสถานเพียงด้านเดียว</>
     );
 
-    // 8 · default
+    // 6 · default
     return (
-      <>คุณให้ความสำคัญสูงสุดกับ "<strong>{top.name}</strong>" ({top.a}M) และไม่จัดสรรให้ <strong>{zeroed} โครงการ</strong> — ลองเทียบกับที่คนอื่นในงานเลือกด้วย</>
+      <>คุณเลือก <strong>{top.name}</strong> เป็นอันดับหนึ่ง — ซึ่งภาครัฐจัดสรรให้เพียง <strong>{top.real}M</strong> หรือเท่ากับ <strong>{govTopPct}%</strong> เท่านั้น</>
     );
   }, [alloc, total]);
 
