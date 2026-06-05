@@ -228,6 +228,7 @@
 <body>
 <div id="root"></div>
 <script type="text/babel">
+
 const { useState, useMemo, useCallback, useEffect, useRef } = React;
 
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbywO-O9qzJLcaC3g3Fw2JUtlCTIINuID4uCf6D9x_eAhzk17X7_Xe9Whm96bCGvXtIV/exec';
@@ -235,31 +236,31 @@ const MAX = 100;
 const REAL_TOTAL = 3855;
 
 const PROJECTS = [
-  { id:'film',     icon:'🎬', name:'ทุนหนัง/ซีรีส์/แอนิเมชัน',    agency:'กรมส่งเสริมวัฒนธรรม',        real:104  },
-  { id:'welfare',  icon:'🛡️', name:'ทุนตรง/สวัสดิการศิลปินอิสระ', agency:'ไม่มีหน่วยงานรับผิดชอบ',     real:0    },
-  { id:'music',    icon:'🎵', name:'ดนตรีและ Music Awards',         agency:'กรมส่งเสริมวัฒนธรรม',        real:43   },
-  { id:'game',     icon:'🎮', name:'เกม Soft Power ไทย',            agency:'กรมส่งเสริมวัฒนธรรม',        real:37   },
-  { id:'perform',  icon:'🎭', name:'พื้นที่ศิลปะการแสดง',           agency:'กรมส่งเสริมวัฒนธรรม',        real:33   },
-  { id:'book',     icon:'📚', name:'หนังสือและวรรณกรรม',            agency:'กรมส่งเสริมวัฒนธรรม',        real:45   },
-  { id:'cea',      icon:'🏙️', name:'เศรษฐกิจสร้างสรรค์ (CEA)',     agency:'สำนักนายกรัฐมนตรี',           real:566  },
-  { id:'heritage', icon:'🏛️', name:'โบราณสถานและมรดกวัฒนธรรม',     agency:'กรมศิลปากร',                 real:2809 },
-  { id:'forum',    icon:'🎪', name:'Soft Power Forum นานาชาติ',     agency:'กรมส่งเสริมวัฒนธรรม',        real:77   },
-  { id:'archive',  icon:'🎞️', name:'หอภาพยนตร์แห่งชาติ',           agency:'หอภาพยนตร์ (องค์การมหาชน)', real:141  },
-];
+{ id: 'film', icon: '🎬', name: 'ทุนหนัง/ซีรีส์/แอนิเมชัน', agency: 'กรมส่งเสริมวัฒนธรรม', real: 104 },
+{ id: 'welfare', icon: '🛡️', name: 'ทุนตรง/สวัสดิการศิลปินอิสระ', agency: 'ไม่มีหน่วยงานรับผิดชอบ', real: 0 },
+{ id: 'music', icon: '🎵', name: 'ดนตรีและ Music Awards', agency: 'กรมส่งเสริมวัฒนธรรม', real: 43 },
+{ id: 'game', icon: '🎮', name: 'เกม Soft Power ไทย', agency: 'กรมส่งเสริมวัฒนธรรม', real: 37 },
+{ id: 'perform', icon: '🎭', name: 'พื้นที่ศิลปะการแสดง', agency: 'กรมส่งเสริมวัฒนธรรม', real: 33 },
+{ id: 'book', icon: '📚', name: 'หนังสือและวรรณกรรม', agency: 'กรมส่งเสริมวัฒนธรรม', real: 45 },
+{ id: 'cea', icon: '🏙️', name: 'เศรษฐกิจสร้างสรรค์ (CEA)', agency: 'สำนักนายกรัฐมนตรี', real: 566 },
+{ id: 'heritage', icon: '🏛️', name: 'โบราณสถานและมรดกวัฒนธรรม', agency: 'กรมศิลปากร', real: 2809 },
+{ id: 'forum', icon: '🎪', name: 'Soft Power Forum นานาชาติ', agency: 'กรมส่งเสริมวัฒนธรรม', real: 77 },
+{ id: 'archive', icon: '🎞️', name: 'หอภาพยนตร์แห่งชาติ', agency: 'หอภาพยนตร์ (องค์การมหาชน)', real: 141 }];
 
-function genId() { return 'sess-' + Math.random().toString(36).slice(2,11); }
+
+function genId() {return 'sess-' + Math.random().toString(36).slice(2, 11);}
 const SESSION_ID = genId();
 
 /* ── Project Popup (bottom sheet) ── */
 function ProjectSheet({ project, value, remaining, onSave, onClose }) {
   const [local, setLocal] = useState(value);
   const sliderMax = value + remaining; // can increase by up to remaining
-  const pct = sliderMax > 0 ? (local / sliderMax) * 100 : 0;
+  const pct = sliderMax > 0 ? local / sliderMax * 100 : 0;
   const track = `linear-gradient(to right,#FF6A14 ${pct}%,#1D1C19 ${pct}%)`;
 
   return (
     <div className="sheet-overlay" onClick={onClose}>
-      <div className="sheet" onClick={e => e.stopPropagation()}>
+      <div className="sheet" onClick={(e) => e.stopPropagation()}>
         <div className="sheet-handle" />
         <div className="sheet-icon">{project.icon}</div>
         <div className="sheet-name">{project.name}</div>
@@ -269,23 +270,23 @@ function ProjectSheet({ project, value, remaining, onSave, onClose }) {
           <span className="sheet-val-unit">ล้านบาท</span>
         </div>
         <div className="sheet-max">
-          {sliderMax < MAX
-            ? `จัดสรรได้สูงสุด ${sliderMax}M (งบเหลือ ${remaining}M)`
-            : `จัดสรรได้สูงสุด ${MAX}M`}
+          {sliderMax < MAX ?
+          `จัดสรรได้สูงสุด ${sliderMax}M (งบเหลือ ${remaining}M)` :
+          `จัดสรรได้สูงสุด ${MAX}M`}
         </div>
         <input
           type="range" min="0" max={sliderMax} step="5" value={local}
           style={{ background: track }}
           aria-label={project.name}
-          onChange={e => setLocal(parseInt(e.target.value))}
-        />
+          onChange={(e) => setLocal(parseInt(e.target.value))} />
+        
         <div className="sheet-actions">
           <button className="btn btn-ghost btn-sm" onClick={onClose}>ยกเลิก</button>
           <button className="btn btn-or btn-sm" onClick={() => onSave(project.id, local)}>บันทึก</button>
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 }
 
 /* ── Budget Full Modal ── */
@@ -296,15 +297,15 @@ function BudgetFullModal({ onSubmit, onEdit }) {
         <div className="bfm-icon">✓</div>
         <div className="bfm-title">งบครบ 100 ล้านบาทแล้ว!</div>
         <div className="bfm-sub">
-          พร้อมส่งคำตอบ<br/>หรือจะกลับไปแก้ไขงบก่อน?
+          พร้อมส่งคำตอบ<br />หรือจะกลับไปแก้ไขงบก่อน?
         </div>
         <div className="bfm-actions">
           <button className="btn btn-or" onClick={onSubmit}>ส่งคำตอบ →</button>
           <button className="btn btn-ghost" onClick={onEdit}>แก้ไขงบใหม่</button>
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 }
 
 /* ── Page 0 — Intro ── */
@@ -313,30 +314,30 @@ function IntroPage({ onStart }) {
     <div className="intro pop">
       <div className="eyebrow">มาลองจัดสรรงบประมาณวัฒนธรรมและเศรษฐกิจสร้างสรรค์กัน</div>
       <h1 className="big-title">
-        ถ้าคุณ<br/>เป็น<br/><em>รมว.</em><br/>วัฒนธรรม
+        ถ้าคุณ<br />เป็น<br /><em>รมว.</em><br />วัฒนธรรม
       </h1>
       <div className="rule"></div>
       <p className="intro-desc">
         หากคุณมีงบ <strong>100 ล้านบาท</strong> คุณจะจัดสรรโครงการวัฒนธรรมอย่างไร
-        <br/>(เปรียบเทียบจากงบรัฐปี 2569)
+        <br />(เปรียบเทียบจากงบรัฐปี 2569)
       </p>
       <button className="btn btn-or" onClick={onStart}>เริ่มจัดสรรงบ →</button>
       <p className="intro-note" data-comment-anchor="intro-note">
-        ตัวเลือกของคุณจะแชร์ยัง หน้าจอกลาง ที่งาน<br/>
+        ตัวเลือกของคุณจะแชร์ยัง หน้าจอกลาง ที่งาน<br />
         <strong>แฮกงบ วัฒนธรรม 70</strong> วันที่ 27 มิ.ย. นี้ ที่พรรคประชาชน
       </p>
-    </div>
-  );
+    </div>);
+
 }
 
 /* ── Page 1 — Play (Square Grid) ── */
 function PlayPage({ alloc, onChange, onSubmit, sending }) {
-  const total    = useMemo(() => Object.values(alloc).reduce((s,v) => s+v, 0), [alloc]);
+  const total = useMemo(() => Object.values(alloc).reduce((s, v) => s + v, 0), [alloc]);
   const remaining = MAX - total;
-  const isOver   = total > MAX;
-  const pct      = Math.min((total / MAX) * 100, 100);
+  const isOver = total > MAX;
+  const pct = Math.min(total / MAX * 100, 100);
 
-  const [openId, setOpenId]             = useState(null);
+  const [openId, setOpenId] = useState(null);
   const [showBudgetFull, setBudgetFull] = useState(false);
   const prevTotal = useRef(total);
 
@@ -346,38 +347,38 @@ function PlayPage({ alloc, onChange, onSubmit, sending }) {
   }, [total]);
 
   const handleSave = useCallback((id, val) => {
-    const others = Object.entries(alloc).filter(([k]) => k !== id).reduce((s,[,v]) => s+v, 0);
+    const others = Object.entries(alloc).filter(([k]) => k !== id).reduce((s, [, v]) => s + v, 0);
     onChange(id, Math.max(0, Math.min(val, MAX - others)));
     setOpenId(null);
   }, [alloc, onChange]);
 
-  const openProject = openId ? PROJECTS.find(p => p.id === openId) : null;
+  const openProject = openId ? PROJECTS.find((p) => p.id === openId) : null;
 
   return (
     <div className="pop">
-      {sending && (
-        <div className="overlay">
+      {sending &&
+      <div className="overlay">
           <div className="spinner"></div>
-          <span style={{color:'var(--tx2)',fontSize:13}}>กำลังส่งผลลัพธ์...</span>
+          <span style={{ color: 'var(--tx2)', fontSize: 13 }}>กำลังส่งผลลัพธ์...</span>
         </div>
-      )}
+      }
 
-      {showBudgetFull && (
-        <BudgetFullModal
-          onSubmit={() => { setBudgetFull(false); onSubmit(); }}
-          onEdit={() => setBudgetFull(false)}
-        />
-      )}
+      {showBudgetFull &&
+      <BudgetFullModal
+        onSubmit={() => {setBudgetFull(false);onSubmit();}}
+        onEdit={() => setBudgetFull(false)} />
 
-      {openProject && (
-        <ProjectSheet
-          project={openProject}
-          value={alloc[openId]}
-          remaining={remaining}
-          onSave={handleSave}
-          onClose={() => setOpenId(null)}
-        />
-      )}
+      }
+
+      {openProject &&
+      <ProjectSheet
+        project={openProject}
+        value={alloc[openId]}
+        remaining={remaining}
+        onSave={handleSave}
+        onClose={() => setOpenId(null)} />
+
+      }
 
       <div className="ph">
         <div className="ph-label">งบคงเหลือ</div>
@@ -386,25 +387,25 @@ function PlayPage({ alloc, onChange, onSubmit, sending }) {
           <span className="ph-unit">ล้านบาท</span>
         </div>
         <div className="ph-bar">
-          <div className="ph-fill" style={{width:`${pct}%`, background: isOver ? 'var(--red)' : 'var(--or)'}} />
+          <div className="ph-fill" style={{ width: `${pct}%`, background: isOver ? 'var(--red)' : 'var(--or)' }} />
         </div>
       </div>
 
       <div className="proj-grid">
-        {PROJECTS.map(p => {
+        {PROJECTS.map((p) => {
           const v = alloc[p.id];
           return (
             <button
               key={p.id}
               className={`sq-card ${v > 0 ? 'sq-card--active' : ''}`}
               onClick={() => setOpenId(p.id)}
-              aria-label={p.name}
-            >
+              aria-label={p.name}>
+              
               {v > 0 && <span className="sq-alloc">{v}M</span>}
               <span className="sq-icon">{p.icon}</span>
               <span className="sq-name">{p.name}</span>
-            </button>
-          );
+            </button>);
+
         })}
       </div>
 
@@ -413,58 +414,90 @@ function PlayPage({ alloc, onChange, onSubmit, sending }) {
         <button
           className="btn btn-or"
           disabled={total === 0 || sending}
-          onClick={() => onSubmit()}
-        >
+          onClick={() => onSubmit()}>
+          
           {sending ? 'กำลังส่ง...' : 'ส่งคำตอบ →'}
         </button>
       </div>
-    </div>
-  );
+    </div>);
+
 }
 
 /* ── Page 2 — Results ── */
 function ResultsPage({ alloc, onReset }) {
-  const total = Object.values(alloc).reduce((s,v) => s+v, 0);
+  const total = Object.values(alloc).reduce((s, v) => s + v, 0);
 
   const sorted = useMemo(() =>
-    [...PROJECTS].map(p => ({...p, a: alloc[p.id]})).sort((a,b) => b.a - a.a),
+  [...PROJECTS].map((p) => ({ ...p, a: alloc[p.id] })).sort((a, b) => b.a - a.a),
   [alloc]);
 
+  const nonZero = useMemo(() => sorted.filter(p => p.a > 0), [sorted]);
+  const isAllEqual = nonZero.length >= 2 && nonZero.every(p => p.a === nonZero[0].a);
+  const equalVal = isAllEqual ? nonZero[0].a : 0;
+
   const insight = useMemo(() => {
-    const sorted = [...PROJECTS]
-      .map(p => ({...p, a: alloc[p.id] || 0}))
+    const s = [...PROJECTS]
+      .map(p => ({ ...p, a: alloc[p.id] || 0 }))
       .sort((a, b) => b.a - a.a);
-    const top      = sorted[0];
-    const second   = sorted[1];
+    const top      = s[0];
+    const second   = s[1];
     const welfareA  = alloc['welfare']  || 0;
     const heritageA = alloc['heritage'] || 0;
-    const govHerPct = Math.round((2809 / REAL_TOTAL) * 100);          // 72%
-    const userTopPct = total > 0 ? Math.round((top.a / total) * 100) : 0;
-    const userHerPct = total > 0 ? Math.round((heritageA / total) * 100) : 0;
-    const zeroed     = sorted.filter(p => p.a === 0).length;
-    const govTopPct  = Math.round((top.real / REAL_TOTAL) * 100);
+    const ceaA      = alloc['cea']      || 0;
+    const filmA     = alloc['film']     || 0;
+    const nonZeroS  = s.filter(p => p.a > 0);
+    const allEq     = nonZeroS.length >= 2 && nonZeroS.every(p => p.a === nonZeroS[0].a);
+    const userTopPct  = total > 0 ? Math.round(top.a / total * 100) : 0;
+    const userHerPct  = total > 0 ? Math.round(heritageA / total * 100) : 0;
+    const ceaPct      = total > 0 ? Math.round(ceaA / total * 100) : 0;
+    const zeroed      = s.filter(p => p.a === 0).length;
+    const govTopPct   = Math.round(top.real / REAL_TOTAL * 100);
+    const creativeSum = ['film','music','game','perform','book'].reduce((acc,id) => acc+(alloc[id]||0), 0);
+    const creativePct = total > 0 ? Math.round(creativeSum / total * 100) : 0;
 
-    // 1 · ให้งบสวัสดิการ (รัฐ = 0) — ชัดที่สุด
+    // 0 · ให้เท่ากันทุกโครงการ
+    if (allEq) {
+      const n = nonZeroS.length;
+      const v = nonZeroS[0].a;
+      return <>คุณให้ทุก <strong>{n} โครงการ</strong> เท่ากันที่ <strong>{v}M</strong> ต่อโครงการ — มองว่าทุกด้านสำคัญพอกัน ขณะที่รัฐกระจุก <strong>73%</strong> ไว้ที่โบราณสถานเพียงด้านเดียว</>;
+    }
+
+    // 1 · ให้สวัสดิการ (รัฐ = 0)
     if (welfareA >= 10) return (
       <>คุณจัดสรร <strong>{welfareA}M</strong> ให้สวัสดิการศิลปินอิสระ — นโยบายที่<strong>รัฐไม่มีงบรองรับเลย</strong>ในปี 2569 นี่คือจุดแตกต่างที่ชัดที่สุดระหว่างคุณกับนโยบายจริง</>
     );
 
-    // 3 · เห็นด้วยกับรัฐเรื่องโบราณสถาน
+    // 2 · ไม่ให้โบราณสถานเลย
+    if (heritageA === 0) return (
+      <>คุณไม่ให้งบโบราณสถานเลย ทั้งที่รัฐใช้ <strong>73%</strong> ไปที่นี่ — คุณเลือกให้เงินถึง<strong>มือนักสร้างสรรค์โดยตรง</strong>มากกว่าอนุรักษ์สิ่งที่มีอยู่</>
+    );
+
+    // 3 · ทุ่ม CEA มาก
+    if (ceaA >= 40) return (
+      <>คุณลงทุนใน<strong>เศรษฐกิจสร้างสรรค์ (CEA)</strong> {ceaA}M ({ceaPct}%) — รัฐให้ที่นี่ {Math.round(566 / REAL_TOTAL * 100)}% คุณเชื่อว่า Creative Economy คือ<strong>อนาคตของวัฒนธรรม</strong></>
+    );
+
+    // 4 · ทุ่มอุตสาหกรรมสร้างสรรค์รวมกัน
+    if (creativePct >= 55) return (
+      <>คุณทุ่ม <strong>{creativeSum}M ({creativePct}%)</strong> ให้หนัง ดนตรี เกม การแสดง และหนังสือรวมกัน — ขณะที่รัฐให้อุตสาหกรรมเหล่านี้รวมกันเพียง <strong>{Math.round((104+43+37+33+45) / REAL_TOTAL * 100)}%</strong></>
+    );
+
+    // 5 · เห็นด้วยกับรัฐเรื่องโบราณสถาน
     if (userHerPct >= 40) return (
       <>คุณให้งบโบราณสถาน <strong>{heritageA}M</strong> ({userHerPct}%) ใกล้เคียงกับที่รัฐจัดสรรจริง — แสดงว่าคุณให้ความสำคัญกับ<strong>มรดกวัฒนธรรม</strong>ในระดับสูง</>
     );
 
-    // 4 · top pick คือสิ่งที่รัฐ underfund มาก
+    // 6 · top pick ต่างจากรัฐมาก
     if (userTopPct - govTopPct > 20) return (
-      <>คุณทุ่ม <strong>{top.a}M</strong> ให้ "{top.name}" มากที่สุด — ขณะที่รัฐใช้ที่นี่เพียง <strong>{top.real}M</strong> ({govTopPct}% ของงบ) คุณเห็นคุณค่าตรงนี้ต่างจากนโยบายจริง</>
+      <>คุณทุ่ม <strong>{top.a}M</strong> ให้ "{top.name}" มากที่สุด — ขณะที่รัฐใช้ที่นี่เพียง <strong>{top.real}M</strong> ({govTopPct}%) คุณเห็นคุณค่าตรงนี้ต่างจากนโยบายจริง</>
     );
 
-    // 5 · กระจายงบไปหลายที่ (top + second ต่างกันไม่มาก)
-    if (second && top.a > 0 && (top.a - second.a) <= 10) return (
-      <>คุณกระจายงบให้ "{top.name}" และ "{second.name}" เท่าๆ กัน — แสดงว่าคุณไม่อยากเลือกอุตสาหกรรมใดเป็นพิเศษ แต่ต้องการลงทุนในหลายด้านพร้อมกัน</>
+    // 7 · กระจายใกล้เคียงกัน
+    if (second && top.a > 0 && top.a - second.a <= 10) return (
+      <>คุณกระจายงบให้ "{top.name}" และ "{second.name}" ใกล้เคียงกัน — ไม่อยากให้อุตสาหกรรมใดได้เปรียบ แต่ต้องการ<strong>ลงทุนพร้อมกันหลายด้าน</strong></>
     );
 
-    // 6 · default: บอก top pick และสิ่งที่ไม่ได้ให้
+    // 8 · default
     return (
       <>คุณให้ความสำคัญสูงสุดกับ "<strong>{top.name}</strong>" ({top.a}M) และไม่จัดสรรให้ <strong>{zeroed} โครงการ</strong> — ลองเทียบกับที่คนอื่นในงานเลือกด้วย</>
     );
@@ -476,24 +509,31 @@ function ResultsPage({ alloc, onReset }) {
         <div className="r-check">✓</div>
         <div className="r-title">จัดสรรงบแล้ว!</div>
         <div className="r-sub">
-          หากอยากรู้ว่างบ 70 จะเป็นยังไง อย่าลืมมาร่วมกัน<br/>
-          <strong>แฮกงบวัฒนธรรม 70</strong><br/>
-          วันที่ 27 มิ.ย. นี้ ที่พรรคประชาชน<br/>
-          ตั้งแต่เวลา 9.00 - 17.00 น.<br/>
-          <span style={{color:'var(--tx)'}}>ผลการจัดสรรงบของทุกคนก็จะจัดแสดงในงานด้วยน้าาา</span>
+          หากอยากรู้ว่างบ 70 จะเป็นยังไง อย่าลืมมาร่วมกัน<br />
+          <strong>แฮกงบวัฒนธรรม 70</strong><br />
+          วันที่ 27 มิ.ย. นี้ ที่พรรคประชาชน<br />
+          ตั้งแต่เวลา 9.00 - 17.00 น.<br />
+          <span style={{ color: 'var(--tx)' }}>ผลการจัดสรรงบของทุกคนก็จะจัดแสดงในงานด้วยน้าาา</span>
         </div>
       </div>
 
-      <div className="sec-lbl">{sorted.filter(p => p.a > 0).length >= 5 ? 'การจัดสรรของคุณ — Top 5' : 'การจัดสรรของคุณ'}</div>
+      <div className="sec-lbl">{isAllEqual ? 'อันดับการจัดสรร' : nonZero.length >= 5 ? 'อันดับการจัดสรร — Top 5' : 'อันดับการจัดสรร'}</div>
       <div className="ranklist">
-        {sorted.filter(p => p.a > 0).slice(0,5).map((p, i) => (
-          <div key={p.id} className="ri">
-            <span className="ri-n">#{i+1}</span>
+        {isAllEqual
+          ? <div className="ri" style={{flexDirection:'column',alignItems:'flex-start',gap:6}}>
+              <span className="ri-n" style={{fontSize:12}}>เลือกทุกโครงการ — อย่างละ {equalVal}ล้าน</span>
+              <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
+                {nonZero.map(p => <span key={p.id} style={{fontSize:12,color:'var(--tx2)'}}>{p.icon} {p.name}</span>)}
+              </div>
+            </div>
+          : nonZero.slice(0, 5).map((p, i) =>
+            <div key={p.id} className="ri">
+            <span className="ri-n">#{i + 1}</span>
             <span className="ri-ic">{p.icon}</span>
             <span className="ri-nm">{p.name}</span>
             <span className={`ri-vl ${p.a > 0 ? 'vl-on' : 'vl-off'}`}>{p.a}M</span>
           </div>
-        ))}
+        )}
       </div>
 
       <div className="insight">
@@ -505,30 +545,30 @@ function ResultsPage({ alloc, onReset }) {
       <div className="cmp-table">
         <div className="cmp-head">
           <span>โครงการ</span>
-          <span style={{textAlign:'right'}}>คุณ</span>
-          <span style={{textAlign:'right'}}>งบรัฐ</span>
+          <span style={{ textAlign: 'right' }}>คุณ</span>
+          <span style={{ textAlign: 'right' }}>งบรัฐ</span>
         </div>
-        {sorted.map(p => (
-          <div key={p.id} className="cmp-row">
-            <span className="cmp-proj">{p.icon} {p.name.length > 16 ? p.name.slice(0,15)+'…' : p.name}</span>
+        {sorted.map((p) =>
+        <div key={p.id} className="cmp-row">
+            <span className="cmp-proj">{p.icon} {p.name.length > 16 ? p.name.slice(0, 15) + '…' : p.name}</span>
             <span className={`cmp-you ${p.a > 0 ? 'cmp-you--on' : 'cmp-you--off'}`}>{p.a}M</span>
             <span className="cmp-govt">{p.real}M</span>
           </div>
-        ))}
+        )}
       </div>
 
       <button className="btn btn-ghost" onClick={onReset}>เล่นอีกครั้ง</button>
-    </div>
-  );
+    </div>);
+
 }
 
 /* ── App ── */
 function App() {
-  const [page, setPage]       = useState(0);
-  const [alloc, setAlloc]     = useState(() => Object.fromEntries(PROJECTS.map(p => [p.id, 0])));
+  const [page, setPage] = useState(0);
+  const [alloc, setAlloc] = useState(() => Object.fromEntries(PROJECTS.map((p) => [p.id, 0])));
   const [sending, setSending] = useState(false);
 
-  const handleChange = useCallback((id, val) => setAlloc(prev => ({...prev, [id]: val})), []);
+  const handleChange = useCallback((id, val) => setAlloc((prev) => ({ ...prev, [id]: val })), []);
 
   const handleSubmit = async () => {
     setSending(true);
@@ -539,16 +579,16 @@ function App() {
           timestamp: new Date().toISOString(),
           session_id: SESSION_ID,
           ...alloc,
-          total: Object.values(alloc).reduce((s,v) => s+v, 0),
-        }),
+          total: Object.values(alloc).reduce((s, v) => s + v, 0)
+        })
       });
-    } catch(_) { /* fallback gracefully */ }
+    } catch (_) {/* fallback gracefully */}
     setSending(false);
     setPage(2);
   };
 
   const handleReset = () => {
-    setAlloc(Object.fromEntries(PROJECTS.map(p => [p.id, 0])));
+    setAlloc(Object.fromEntries(PROJECTS.map((p) => [p.id, 0])));
     setPage(0);
   };
 
@@ -557,8 +597,8 @@ function App() {
       {page === 0 && <IntroPage onStart={() => setPage(1)} />}
       {page === 1 && <PlayPage alloc={alloc} onChange={handleChange} onSubmit={handleSubmit} sending={sending} />}
       {page === 2 && <ResultsPage alloc={alloc} onReset={handleReset} />}
-    </div>
-  );
+    </div>);
+
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(<App />);
