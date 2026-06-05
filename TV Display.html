@@ -63,7 +63,7 @@
     }
     .hdr-logo { height: 32px; opacity: .85; filter: brightness(1.1); }
     .hdr-divider { width: 1px; height: 28px; background: var(--bd); }
-    .hdr-title { font-size: 18px; font-weight: 700; letter-spacing: -.01em; }
+    .hdr-title { font-size: 18px; font-weight: 300; letter-spacing: -.01em; }
     .hdr-title em { color: var(--or); font-style: normal; }
     .hdr-gap { flex: 1; }
 
@@ -75,11 +75,15 @@
       border: 1px solid var(--bdo);
       border-radius: 3px;
     }
+    .live-badge.connecting { color: var(--tx3); border-color: var(--bd); }
+    .live-badge.error { color: #FF453A; border-color: rgba(255,69,58,.3); }
     .live-dot {
       width: 6px; height: 6px;
       background: var(--or); border-radius: 50%;
       animation: blink 1.6s ease-in-out infinite;
     }
+    .live-badge.connecting .live-dot { background: var(--tx3); animation: none; }
+    .live-badge.error .live-dot { background: #FF453A; animation: none; }
     @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:.15;} }
 
     .hdr-count { font-size: 13px; color: var(--tx2); }
@@ -96,30 +100,23 @@
 
     /* ─── LEFT PANEL — bar chart ─────────────────────────── */
     .panel-l {
-      flex: 0 0 60%;
+      flex: 0 0 70%;
       border-right: 1px solid var(--bd);
-      padding: 20px 28px 16px;
+      padding: 0 28px;
       display: flex; flex-direction: column;
       overflow: hidden;
     }
-    .panel-eyebrow {
-      font-size: 10px; font-weight: 700; letter-spacing: .12em;
-      text-transform: uppercase; color: var(--tx3); margin-bottom: 3px;
+    .panel-header {
+      flex: 0 0 5%;
+      display: flex; flex-direction: column; justify-content: center;
+      overflow: hidden;
     }
-    .panel-title { font-size: 20px; font-weight: 700; margin-bottom: 3px; }
+    .panel-title { font-size: 20px; font-weight: 700; }
     .panel-title em { color: var(--or); font-style: normal; }
-    .panel-sub { font-size: 12px; color: var(--tx2); margin-bottom: 10px; }
+    .panel-sub { font-size: 11px; color: var(--tx2); }
 
-    /* chart legend */
-    .clegend { display: flex; gap: 16px; margin-bottom: 10px; }
-    .cl { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--tx2); }
-    .cl-bar { width: 14px; height: 3px; border-radius: 2px; }
-    .cl-or  { background: var(--or); }
-    .cl-gr  { background: #4076FA; }
-
-    /* 5×2 card grid */
     .cgrid {
-      flex: 1; overflow: hidden;
+      flex: 0 0 70%; overflow: hidden;
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       grid-template-rows: repeat(2, 1fr);
@@ -166,11 +163,30 @@
     .cbv-or   { color: var(--or); }
     .cbv-bl   { color: #4076FA; }
 
+    /* ─── QR BAR (bottom of left panel) ──────────────────── */
+    .qr-bar {
+      flex: 0 0 25%;
+      border-top: 1px solid var(--bd);
+      display: flex; align-items: center; gap: 24px;
+    }
+    .qr-big {
+      width: 180px; height: 180px; flex-shrink: 0;
+      background: var(--s1); border-radius: 10px; overflow: hidden;
+      border: 1px solid var(--bdo);
+    }
+    .qr-big img { width: 100%; height: 100%; display: block; }
+    .qr-info { display: flex; flex-direction: column; gap: 6px; }
+    .qr-scan-lbl {
+      font-size: 11px; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--or);
+    }
+    .qr-cta { font-size: 24px; font-weight: 700; line-height: 1.15; }
+    .qr-url { font-family: var(--mono); font-size: 13px; color: var(--tx2); }
     /* ─── RIGHT PANEL — stats ────────────────────────────── */
     .panel-r {
-      flex: 1;
-      padding: 24px 28px;
-      display: flex; flex-direction: column; gap: 16px;
+      flex: 0 0 30%;
+      padding: 20px 32px 20px 16px;
+      display: flex; flex-direction: column; gap: 14px;
       overflow-y: auto;
     }
     .panel-r::-webkit-scrollbar { width: 3px; }
@@ -273,25 +289,13 @@
     }
     .qr-p-url { font-family: var(--mono); font-size: 12px; color: var(--tx2); }
 
-    /* ─── FOOTER ─────────────────────────────────────────── */
+    /* ─── FOOTER (simplified) ─────────────────────────────── */
     .footer {
-      height: 60px; min-height: 60px;
+      height: 44px; min-height: 44px;
       border-top: 1px solid var(--bd);
       display: flex; align-items: center;
       padding: 0 32px; gap: 16px;
     }
-    .footer-qr {
-      width: 40px; height: 40px; flex-shrink: 0;
-      background: var(--s1); border-radius: 6px; overflow: hidden;
-      border: 1px solid var(--bdo);
-    }
-    .footer-qr img { width: 100%; height: 100%; display: block; }
-    .footer-qr-info { display: flex; flex-direction: column; gap: 2px; }
-    .footer-scan {
-      font-size: 11px; font-weight: 700; letter-spacing: .1em;
-      text-transform: uppercase; color: var(--or);
-    }
-    .footer-url { font-family: var(--mono); font-size: 11px; color: var(--tx3); }
     .footer-gap { flex: 1; }
     .footer-updated { font-size: 11px; color: var(--tx3); font-family: var(--mono); }
     .footer-demo {
@@ -353,6 +357,18 @@ const DEMO_DATA = {
   { top: 'ภาพยนตร์', topVal: 50, second: 'เกม Soft Power', secondVal: 15, ts: '18 นาทีที่แล้ว' }]
 
 };
+
+/* ── Fetch with Apps Script CORS handling ── */
+async function fetchSheetData(url) {
+  const res = await fetch(url, {
+    method: 'GET',
+    redirect: 'follow',
+    cache: 'no-store',
+    headers: { 'Accept': 'application/json' },
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
 
 /* ── Parse Apps Script JSON response ── */
 function parseRows(rows) {
@@ -479,17 +495,25 @@ function QRPlaceholder() {
 /* ── Main App ── */
 function App() {
   const [data, setData] = useState(DEMO_DATA);
-  const [isDemo, setIsDemo] = useState(true);
+  const [connState, setConnState] = useState('connecting');
   const [lastUpdate, setLastUpdate] = useState(new Date());
   const animCount = useCountUp(data.count);
 
   const fetchData = useCallback(async () => {
     try {
-      const res = await fetch(SHEET_JSON_URL + '?t=' + Date.now());
-      const rows = await res.json();
+      const rows = await fetchSheetData(SHEET_JSON_URL + '?t=' + Date.now());
       const parsed = parseRows(rows);
-      if (parsed) {setData(parsed);setIsDemo(false);}
-    } catch (_) {/* keep current data */}
+      if (parsed) {
+        setData(parsed);
+        setConnState('live');
+      } else {
+        // Sheet empty — connected but no data yet
+        setConnState('live');
+      }
+    } catch (err) {
+      console.error('[TV] fetch error:', err.message);
+      setConnState(prev => prev === 'live' ? 'live' : 'error');
+    }
     setLastUpdate(new Date());
   }, []);
 
@@ -529,7 +553,10 @@ function App() {
           ประชาชนจัดสรรงบวัฒนธรรมและเศรษฐกิจสร้างสรรค์อย่างไร
         </div>
         <div className="hdr-gap" />
-        <div className="live-badge"><div className="live-dot" />LIVE</div>
+        <div className={`live-badge${connState === 'connecting' ? ' connecting' : connState === 'error' ? ' error' : ''}`}>
+          <div className="live-dot" />
+          {connState === 'live' ? 'LIVE' : connState === 'error' ? 'ERROR' : 'CONNECTING…'}
+        </div>
         <div className="hdr-count">
           <strong>{animCount}</strong>คนร่วมแล้ว
         </div>
@@ -540,11 +567,26 @@ function App() {
 
         {/* Left — chart */}
         <div className="panel-l">
-          <div className="panel-title">ประชาชน<em>จัดงบ</em>อย่างไร?</div>
-          <div className="panel-sub">
-            ค่าเฉลี่ยจาก {data.count} คน (% ของงบรวม) เทียบกับงบประมาณจริงปี 2569
+          <div className="panel-header">
+            <div className="panel-title">จัดอันดับงบจากผลลัพธ์ของ<em>ประชาชน</em></div>
+            <div className="panel-sub">ค่าเฉลี่ยจาก {data.count} คน (% ของงบรวม) เทียบกับงบประมาณจริงปี 2569</div>
           </div>
           <CardGrid data={data} />
+
+          {/* Large QR below grid */}
+          <div className="qr-bar">
+            <div className="qr-big">
+              <img
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=${encodeURIComponent(BOOTH_URL)}&bgcolor=131210&color=FF6A14&margin=6`}
+                alt="QR"
+                onError={(e) => { e.target.style.display='none'; }}
+              />
+            </div>
+            <div className="qr-info">
+              <span className="qr-scan-lbl">สแกน QR เพื่อร่วมจัดสรรงบ</span>
+              <span className="qr-url">{BOOTH_URL}</span>
+            </div>
+          </div>
         </div>
 
         {/* Right — stats */}
@@ -620,19 +662,9 @@ function App() {
 
       {/* ── Footer ── */}
       <footer className="footer">
-        <div className="footer-qr">
-          <img
-            src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(BOOTH_URL)}&bgcolor=131210&color=FF6A14&margin=2`}
-            alt="QR"
-            onError={(e) => { e.target.style.display='none'; }}
-          />
-        </div>
-        <div className="footer-qr-info">
-          <span className="footer-scan">สแกน QR เพื่อเล่น</span>
-          <span className="footer-url">{BOOTH_URL}</span>
-        </div>
         <div className="footer-gap" />
-        {isDemo && <span className="footer-demo" style={{display:'none'}}>DEMO DATA</span>}
+        {connState === 'error' && <span className="footer-demo" style={{color:'#FF453A',borderColor:'rgba(255,69,58,.3)',background:'rgba(255,69,58,.1)'}}>ไม่พบข้อมูล — ตรวจ Apps Script doGet</span>}
+        {connState === 'connecting' && <span className="footer-demo" style={{color:'var(--tx3)',borderColor:'var(--bd)',background:'var(--s2)'}}>กำลังเชื่อมต่อ…</span>}
         <span className="footer-updated">อัปเดต {timeStr} · ทุก 10 วินาที</span>
       </footer>
 
