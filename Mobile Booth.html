@@ -47,7 +47,7 @@
     .rule { width:40px; height:2px; background:var(--or); margin:26px 0; }
     .intro-desc { font-size:16px; font-weight:300; line-height:1.7; color:var(--tx2); margin-bottom:44px; }
     .intro-desc strong { color:var(--tx); font-weight:500; }
-    .intro-note { font-size:12px; color:var(--tx3); margin-top:14px; line-height:1.6; }
+    .intro-note { font-size:12px; color:var(--tx2); margin-top:14px; line-height:1.6; }
 
     /* ── BUTTONS ── */
     .btn {
@@ -141,7 +141,17 @@
     .sheet-val { font-family:var(--mono); font-size:52px; font-weight:600; color:var(--or); line-height:1; }
     .sheet-val--zero { color:var(--tx3); }
     .sheet-val-unit { font-size:16px; color:var(--tx2); }
-    .sheet-max { font-size:11px; color:var(--tx3); text-align:center; margin-bottom:14px; }
+    .sheet-max { font-size:11px; color:var(--tx2); text-align:center; margin-bottom:14px; }
+    .sheet-val-input {
+      font-family:var(--mono); font-size:52px; font-weight:600;
+      color:var(--or); line-height:1; background:transparent;
+      border:none; outline:none; width:120px; text-align:center;
+      caret-color:var(--or); transition:color .2s;
+      -moz-appearance:textfield;
+    }
+    .sheet-val-input::-webkit-inner-spin-button,
+    .sheet-val-input::-webkit-outer-spin-button { -webkit-appearance:none; }
+    .sheet-val-input.sheet-val--zero { color:var(--tx3); }
     .sheet-actions { display:grid; grid-template-columns:1fr 2fr; gap:8px; margin-top:20px; }
 
     /* Slider (same styles) */
@@ -208,19 +218,19 @@
     /* 3-column comparison table */
     .cmp-table { margin-bottom:24px; }
     .cmp-head {
-      display:grid; grid-template-columns:1fr 44px 56px;
+      display:grid; grid-template-columns:1fr 40px 52px;
       gap:6px; padding:5px 2px;
       font-size:9px; font-weight:700; letter-spacing:.07em; text-transform:uppercase;
       color:var(--tx3); border-bottom:1px solid var(--bd); margin-bottom:2px;
     }
     .cmp-head span:nth-child(2), .cmp-head span:nth-child(3) { text-align:right; }
     .cmp-row {
-      display:grid; grid-template-columns:1fr 44px 56px;
+      display:grid; grid-template-columns:1fr 40px 52px;
       gap:6px; padding:8px 2px;
       border-bottom:1px solid rgba(255,255,255,0.04);
       align-items:center;
     }
-    .cmp-proj { font-size:12px; color:var(--tx2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .cmp-proj { font-size:12px; color:var(--tx2); line-height:1.35; }
     .cmp-you { font-family:var(--mono); font-size:14px; font-weight:600; text-align:right; }
     .cmp-you--on { color:var(--or); }
     .cmp-you--off { color:var(--tx3); }
@@ -276,7 +286,14 @@ function ProjectSheet({ project, value, remaining, onSave, onClose }) {
         <div className="sheet-name">{project.name}</div>
         <div className="sheet-agency-wrap"><span className="sheet-agency">{project.agency}</span></div>
         <div className="sheet-val-row">
-          <span className={`sheet-val ${local === 0 ? 'sheet-val--zero' : ''}`}>{local}</span>
+          <input
+            type="number" inputMode="numeric"
+            className={`sheet-val-input ${local === 0 ? 'sheet-val--zero' : ''}`}
+            value={local} min={0} max={sliderMax}
+            onChange={(e) => {
+              const v = Math.max(0, Math.min(sliderMax, parseInt(e.target.value) || 0));
+              setLocal(v);
+            }} />
           <span className="sheet-val-unit">ล้านบาท</span>
         </div>
         <div className="sheet-max">
@@ -292,7 +309,7 @@ function ProjectSheet({ project, value, remaining, onSave, onClose }) {
             onChange={(e) => setLocal(parseInt(e.target.value))} />
           <div style={{ display:'flex', justifyContent:'center', alignItems:'center', gap:6, marginTop:10, color:'var(--tx3)', fontSize:11, fontFamily:'var(--f)' }}>
             <span style={{ fontSize:14 }}>👆</span>
-            <span>ลากวงกลมสีส้มเพื่อปรับตัวเลข</span>
+            <span style={{ color:'var(--tx2)' }}>ลากวงกลมสีส้มหรือพิมพ์ตัวเลขด้านบน</span>
           </div>
         </div>
         
@@ -557,7 +574,7 @@ function ResultsPage({ alloc, onReset }) {
         </div>
         {sorted.map((p) =>
         <div key={p.id} className="cmp-row">
-            <span className="cmp-proj">{p.icon} {p.name.length > 16 ? p.name.slice(0, 15) + '…' : p.name}</span>
+            <span className="cmp-proj">{p.icon} {p.name}</span>
             <span className={`cmp-you ${p.a > 0 ? 'cmp-you--on' : 'cmp-you--off'}`}>{p.a}M</span>
             <span className="cmp-govt">{p.real}M</span>
           </div>
