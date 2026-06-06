@@ -121,13 +121,22 @@
     .sheet {
       background:var(--s2); border-radius:16px 16px 0 0;
       padding:12px 24px 44px; width:100%; max-width:430px;
+      max-height:92vh; overflow-y:auto; -webkit-overflow-scrolling:touch;
       animation:sheetUp .3s var(--ease) both;
     }
     @keyframes sheetUp { from{transform:translateY(100%);}to{transform:translateY(0);} }
     .sheet-handle { width:36px; height:4px; background:var(--bd); border-radius:2px; margin:0 auto 22px; }
     .sheet-icon { font-size:36px; margin-bottom:6px; text-align:center; }
     .sheet-name { font-size:18px; font-weight:700; text-align:center; margin-bottom:3px; }
-    .sheet-agency { font-size:11px; color:var(--tx3); text-align:center; margin-bottom:20px; }
+    .sheet-agency {
+      display:inline-flex; align-items:center; gap:5px;
+      font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+      color:var(--or); background:var(--or-dim); border:1px solid var(--bdo);
+      border-radius:99px; padding:3px 10px 3px 8px;
+      margin-bottom:20px;
+    }
+    .sheet-agency::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--or); flex-shrink:0; }
+    .sheet-agency-wrap { text-align:center; }
     .sheet-val-row { display:flex; align-items:baseline; justify-content:center; gap:5px; margin-bottom:4px; }
     .sheet-val { font-family:var(--mono); font-size:52px; font-weight:600; color:var(--or); line-height:1; }
     .sheet-val--zero { color:var(--tx3); }
@@ -229,6 +238,7 @@
 <div id="root"></div>
 <script type="text/babel">
 
+
 const { useState, useMemo, useCallback, useEffect, useRef } = React;
 
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzMtmWlxXNTywR1iwhSoQdFX0_u_atrsM0P74qjEpEnmn2VB8WALPMKJR7j08Q6-TM1/exec';
@@ -264,7 +274,7 @@ function ProjectSheet({ project, value, remaining, onSave, onClose }) {
         <div className="sheet-handle" />
         <div className="sheet-icon">{project.icon}</div>
         <div className="sheet-name">{project.name}</div>
-        <div className="sheet-agency">{project.agency}</div>
+        <div className="sheet-agency-wrap"><span className="sheet-agency">{project.agency}</span></div>
         <div className="sheet-val-row">
           <span className={`sheet-val ${local === 0 ? 'sheet-val--zero' : ''}`}>{local}</span>
           <span className="sheet-val-unit">ล้านบาท</span>
@@ -274,11 +284,17 @@ function ProjectSheet({ project, value, remaining, onSave, onClose }) {
           `จัดสรรได้สูงสุด ${sliderMax}M (งบเหลือ ${remaining}M)` :
           `จัดสรรได้สูงสุด ${MAX}M`}
         </div>
-        <input
-          type="range" min="0" max={sliderMax} step="5" value={local}
-          style={{ background: track }}
-          aria-label={project.name}
-          onChange={(e) => setLocal(parseInt(e.target.value))} />
+        <div style={{ position:'relative', marginBottom:4 }}>
+          <input
+            type="range" min="0" max={sliderMax} step="5" value={local}
+            style={{ background: track }}
+            aria-label={project.name}
+            onChange={(e) => setLocal(parseInt(e.target.value))} />
+          <div style={{ display:'flex', justifyContent:'center', alignItems:'center', gap:6, marginTop:10, color:'var(--tx3)', fontSize:11, fontFamily:'var(--f)' }}>
+            <span style={{ fontSize:14 }}>👆</span>
+            <span>ลากวงกลมสีส้มเพื่อปรับตัวเลข</span>
+          </div>
+        </div>
         
         <div className="sheet-actions">
           <button className="btn btn-ghost btn-sm" onClick={onClose}>ยกเลิก</button>
@@ -431,28 +447,28 @@ function ResultsPage({ alloc, onReset }) {
   [...PROJECTS].map((p) => ({ ...p, a: alloc[p.id] })).sort((a, b) => b.a - a.a),
   [alloc]);
 
-  const nonZero = useMemo(() => sorted.filter(p => p.a > 0), [sorted]);
-  const isAllEqual = nonZero.length >= 2 && nonZero.every(p => p.a === nonZero[0].a);
+  const nonZero = useMemo(() => sorted.filter((p) => p.a > 0), [sorted]);
+  const isAllEqual = nonZero.length >= 2 && nonZero.every((p) => p.a === nonZero[0].a);
   const equalVal = isAllEqual ? nonZero[0].a : 0;
 
   const insight = useMemo(() => {
-    const s = [...PROJECTS]
-      .map(p => ({ ...p, a: alloc[p.id] || 0 }))
-      .sort((a, b) => b.a - a.a);
-    const top      = s[0];
-    const second   = s[1];
-    const welfareA  = alloc['welfare']  || 0;
+    const s = [...PROJECTS].
+    map((p) => ({ ...p, a: alloc[p.id] || 0 })).
+    sort((a, b) => b.a - a.a);
+    const top = s[0];
+    const second = s[1];
+    const welfareA = alloc['welfare'] || 0;
     const heritageA = alloc['heritage'] || 0;
-    const ceaA      = alloc['cea']      || 0;
-    const filmA     = alloc['film']     || 0;
-    const nonZeroS  = s.filter(p => p.a > 0);
-    const allEq     = nonZeroS.length >= 2 && nonZeroS.every(p => p.a === nonZeroS[0].a);
-    const userTopPct  = total > 0 ? Math.round(top.a / total * 100) : 0;
-    const userHerPct  = total > 0 ? Math.round(heritageA / total * 100) : 0;
-    const ceaPct      = total > 0 ? Math.round(ceaA / total * 100) : 0;
-    const zeroed      = s.filter(p => p.a === 0).length;
-    const govTopPct   = Math.round(top.real / REAL_TOTAL * 100);
-    const creativeSum = ['film','music','game','perform','book'].reduce((acc,id) => acc+(alloc[id]||0), 0);
+    const ceaA = alloc['cea'] || 0;
+    const filmA = alloc['film'] || 0;
+    const nonZeroS = s.filter((p) => p.a > 0);
+    const allEq = nonZeroS.length >= 2 && nonZeroS.every((p) => p.a === nonZeroS[0].a);
+    const userTopPct = total > 0 ? Math.round(top.a / total * 100) : 0;
+    const userHerPct = total > 0 ? Math.round(heritageA / total * 100) : 0;
+    const ceaPct = total > 0 ? Math.round(ceaA / total * 100) : 0;
+    const zeroed = s.filter((p) => p.a === 0).length;
+    const govTopPct = Math.round(top.real / REAL_TOTAL * 100);
+    const creativeSum = ['film', 'music', 'game', 'perform', 'book'].reduce((acc, id) => acc + (alloc[id] || 0), 0);
     const creativePct = total > 0 ? Math.round(creativeSum / total * 100) : 0;
 
     // 0 · ทุกโครงการเท่ากัน
@@ -464,34 +480,34 @@ function ResultsPage({ alloc, onReset }) {
 
     // 1 · ให้สวัสดิการ (รัฐ = 0) — คงเดิม
     if (welfareA >= 10) return (
-      <>คุณจัดสรร <strong>{welfareA}M</strong> ให้สวัสดิการศิลปินอิสระ — นโยบายที่<strong>รัฐไม่มีงบรองรับเลย</strong>ในปี 2569 นี่คือจุดแตกต่างที่ชัดที่สุดระหว่างคุณกับนโยบายจริง</>
-    );
+      <>คุณจัดสรร <strong>{welfareA}M</strong> ให้สวัสดิการศิลปินอิสระ — นโยบายที่<strong>รัฐไม่มีงบรองรับเลย</strong>ในปี 2569 นี่คือจุดแตกต่างที่ชัดที่สุดระหว่างคุณกับนโยบายจริง</>);
+
 
     // 2 · CEA สูง
     if (ceaA >= 40) {
-      const govPct = Math.round(566/REAL_TOTAL*100);
+      const govPct = Math.round(566 / REAL_TOTAL * 100);
       return <>คุณเชื่อว่า <strong>Creative Economy</strong> คืออนาคต — งบปี 2569 รัฐให้ไป <strong>{govPct}%</strong> เท่านั้น</>;
     }
 
     // 3 · เห็นด้วยกับรัฐเรื่องโบราณสถาน
     if (userHerPct >= 40) return (
-      <>คุณเห็นในคุณค่า<strong>มรดกวัฒนธรรม</strong> ซึ่งใกล้เคียงกับสัดส่วนที่งบปี 2569 วางไว้ (<strong>2,809 ล้านบาท</strong> หรือ <strong>73%</strong> ของงบ)</>
-    );
+      <>คุณเห็นในคุณค่า<strong>มรดกวัฒนธรรม</strong> ซึ่งใกล้เคียงกับสัดส่วนที่งบปี 2569 วางไว้ (<strong>2,809 ล้านบาท</strong> หรือ <strong>73%</strong> ของงบ)</>);
+
 
     // 4 · top pick ต่างจากรัฐมาก
     if (userTopPct - govTopPct > 20) return (
-      <>คุณเลือก <strong>{top.name}</strong> เป็นอันดับหนึ่ง — ขณะที่งบปี 2569 รัฐให้ที่นี่เพียง <strong>{top.real}M</strong> หรือ <strong>{govTopPct}%</strong> ของงบ</>
-    );
+      <>คุณเลือก <strong>{top.name}</strong> เป็นอันดับหนึ่ง — ขณะที่งบปี 2569 รัฐให้ที่นี่เพียง <strong>{top.real}M</strong> หรือ <strong>{govTopPct}%</strong> ของงบ</>);
+
 
     // 5 · กระจายใกล้เคียงกัน → เหมือน case 0
     if (second && top.a > 0 && top.a - second.a <= 10) return (
-      <>คุณมองเห็นว่าหลายด้านสำคัญพอกัน — ปัจจุบัน <strong>73%</strong> ของงบวัฒนธรรมอยู่ที่โบราณสถานเพียงด้านเดียว</>
-    );
+      <>คุณมองเห็นว่าหลายด้านสำคัญพอกัน — ปัจจุบัน <strong>73%</strong> ของงบวัฒนธรรมอยู่ที่โบราณสถานเพียงด้านเดียว</>);
+
 
     // 6 · default
     return (
-      <>คุณเลือก <strong>{top.name}</strong> เป็นอันดับหนึ่ง — ซึ่งภาครัฐจัดสรรให้เพียง <strong>{top.real}M</strong> หรือเท่ากับ <strong>{govTopPct}%</strong> เท่านั้น</>
-    );
+      <>คุณเลือก <strong>{top.name}</strong> เป็นอันดับหนึ่ง — ซึ่งภาครัฐจัดสรรให้เพียง <strong>{top.real}M</strong> หรือเท่ากับ <strong>{govTopPct}%</strong> เท่านั้น</>);
+
   }, [alloc, total]);
 
   return (
@@ -510,15 +526,15 @@ function ResultsPage({ alloc, onReset }) {
 
       <div className="sec-lbl">{isAllEqual ? 'อันดับการจัดสรร' : nonZero.length >= 5 ? 'อันดับการจัดสรร — Top 5' : 'อันดับการจัดสรร'}</div>
       <div className="ranklist">
-        {isAllEqual
-          ? <div className="ri" style={{flexDirection:'column',alignItems:'flex-start',gap:6}}>
-              <span className="ri-n" style={{fontSize:12}}>เลือกทุกโครงการ — อย่างละ {equalVal}ล้าน</span>
-              <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
-                {nonZero.map(p => <span key={p.id} style={{fontSize:12,color:'var(--tx2)'}}>{p.icon} {p.name}</span>)}
+        {isAllEqual ?
+        <div className="ri" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 6 }}>
+              <span className="ri-n" style={{ fontSize: 12 }}>เลือกทุกโครงการ — อย่างละ {equalVal}ล้าน</span>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {nonZero.map((p) => <span key={p.id} style={{ fontSize: 12, color: 'var(--tx2)' }}>{p.icon} {p.name}</span>)}
               </div>
-            </div>
-          : nonZero.slice(0, 5).map((p, i) =>
-            <div key={p.id} className="ri">
+            </div> :
+        nonZero.slice(0, 5).map((p, i) =>
+        <div key={p.id} className="ri">
             <span className="ri-n">#{i + 1}</span>
             <span className="ri-ic">{p.icon}</span>
             <span className="ri-nm">{p.name}</span>
