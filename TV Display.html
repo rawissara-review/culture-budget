@@ -23,6 +23,7 @@
       --tx:     #EDE9E3;
       --tx2:    #7A766D;
       --tx3:    #45433E;
+      --blue:   #4076FA;
       --f:      "Anakotmai","IBM Plex Sans Thai",system-ui,sans-serif;
       --mono:   "JetBrains Mono",monospace;
       --ease:   cubic-bezier(0.22,1,0.36,1);
@@ -40,7 +41,6 @@
       overflow: hidden;
     }
 
-    /* subtle dot grid */
     body::before {
       content: '';
       position: fixed; inset: 0;
@@ -50,20 +50,20 @@
       z-index: 0;
     }
 
-    /* ─── LAYOUT ────────────────────────────────────────── */
+    /* ─── LAYOUT ── */
     #root { height: 100vh; position: relative; z-index: 1; }
     .app  { display: flex; flex-direction: column; height: 100vh; }
 
-    /* ─── HEADER ─────────────────────────────────────────── */
+    /* ─── HEADER ── */
     .hdr {
       display: flex; align-items: center; gap: 20px;
       padding: 0 40px;
-      height: 68px; min-height: 68px;
+      height: 60px; min-height: 60px;
       border-bottom: 1px solid var(--bd);
     }
-    .hdr-logo { height: 32px; opacity: .85; filter: brightness(1.1); }
-    .hdr-divider { width: 1px; height: 28px; background: var(--bd); }
-    .hdr-title { font-size: 18px; font-weight: 300; letter-spacing: -.01em; }
+    .hdr-logo { height: 28px; opacity: .85; filter: brightness(1.1); }
+    .hdr-divider { width: 1px; height: 24px; background: var(--bd); }
+    .hdr-title { font-size: 16px; font-weight: 300; letter-spacing: -.01em; }
     .hdr-title em { color: var(--or); font-style: normal; }
     .hdr-gap { flex: 1; }
 
@@ -71,7 +71,7 @@
       display: flex; align-items: center; gap: 7px;
       font-size: 10px; font-weight: 700; letter-spacing: .12em;
       text-transform: uppercase; color: var(--or);
-      padding: 6px 12px;
+      padding: 5px 10px;
       border: 1px solid var(--bdo);
       border-radius: 3px;
     }
@@ -88,116 +88,115 @@
 
     .hdr-count { font-size: 13px; color: var(--tx2); }
     .hdr-count strong {
-      font-family: var(--mono); font-size: 28px; font-weight: 600;
+      font-family: var(--mono); font-size: 26px; font-weight: 600;
       color: var(--tx); margin-right: 4px;
-      display: inline-block;
-      transition: color .3s;
+      display: inline-block; transition: color .3s;
     }
     .hdr-count strong.bump { color: var(--or); }
 
-    /* ─── MAIN ───────────────────────────────────────────── */
+    /* ─── MAIN ── */
     .main { display: flex; flex: 1; overflow: hidden; }
 
-    /* ─── LEFT PANEL — bar chart ─────────────────────────── */
+    /* ─── LEFT PANEL ── */
     .panel-l {
       flex: 0 0 70%;
       border-right: 1px solid var(--bd);
-      padding: 0 28px;
+      padding: 0 20px;
       display: flex; flex-direction: column;
       overflow: hidden;
     }
     .panel-header {
-      flex: 0 0 15%;
+      flex: 0 0 12%;
       display: flex; flex-direction: column; justify-content: center;
+    }
+    .panel-title { font-size: 18px; font-weight: 700; }
+    .panel-title em { color: var(--or); font-style: normal; }
+    .panel-sub { font-size: 11px; color: var(--tx2); margin-top: 2px; }
+
+    /* ─── 3+4+4 CARD GRID ── */
+    .cgrid-outer {
+      flex: 0 0 65%;
+      display: flex; flex-direction: column; gap: 7px;
       overflow: hidden;
     }
-    .panel-title { font-size: 20px; font-weight: 700; }
-    .panel-title em { color: var(--or); font-style: normal; }
-    .panel-sub { font-size: 11px; color: var(--tx2); }
-
-    .cgrid {
-      flex: 0 0 65%; overflow: hidden;
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      grid-template-rows: repeat(2, 1fr);
-      gap: 8px;
+    .cgrid-row {
+      display: flex; gap: 7px;
     }
+    .cgrid-row--lg { flex: 0 0 38%; }
+    .cgrid-row--sm { flex: 1; }
     .ccard {
+      flex: 1;
       background: var(--s1); border: 1px solid var(--bd);
-      border-radius: 10px; padding: clamp(8px, 1vw, 16px) clamp(10px, 1.1vw, 18px);
+      border-radius: 9px; padding: clamp(6px, 0.85vw, 14px) clamp(8px, 0.9vw, 14px);
       display: flex; flex-direction: column; overflow: hidden;
+      transition: border-color .3s;
     }
     .ccard--top  { border-color: var(--bdo); background: var(--or-dim); }
-    .ccard--zero { opacity: .55; }
+    .ccard--zero { opacity: .5; }
+
     .cc-rank {
-      font-family: var(--mono); font-size: clamp(9px, 0.7vw, 12px); font-weight: 600;
-      color: var(--tx3); margin-bottom: clamp(6px, 0.8vw, 14px);
+      font-family: var(--mono); font-size: clamp(8px, 0.65vw, 11px); font-weight: 600;
+      color: var(--tx3); margin-bottom: clamp(4px, 0.5vw, 10px);
     }
     .cc-rank--top { color: var(--or); }
-    .cc-icon  { font-size: clamp(20px, 2.2vw, 38px); line-height: 1; margin-bottom: clamp(4px, 0.5vw, 10px); }
-    .cc-name  { font-size: clamp(11px, 0.9vw, 15px); line-height: 1.3; margin-bottom: 5px; }
-    .cc-agency {
-      display: inline-flex; align-items: center; gap: 4px;
-      font-size: clamp(7px, 0.6vw, 10px); font-weight: 700; letter-spacing: .07em;
-      line-height: 1;
-      border-radius: 99px; padding: 3px 8px 3px 6px;
-      border: 1px solid transparent;
+    .cc-icon  { font-size: clamp(16px, 2vw, 34px); line-height: 1; margin-bottom: clamp(3px, 0.35vw, 7px); }
+    .cc-name  {
+      font-size: clamp(10px, 0.8vw, 14px); line-height: 1.28;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
     }
-    .cc-agency::before {
-      content: ''; width: 5px; height: 5px; border-radius: 50%;
-      background: currentColor; flex-shrink: 0;
+    .cc-spacer { flex: 1; min-height: 4px; }
+
+    /* bar pair */
+    .cc-bars  {
+      display: flex; flex-direction: row; gap: clamp(3px, 0.4vw, 7px);
+      height: clamp(36px, 4.5vw, 66px); align-items: flex-end; margin-top: clamp(4px, 0.4vw, 8px);
     }
-    .cc-spacer { flex: 1; min-height: 6px; }
-    .cc-avg   {
-      font-family: var(--mono); font-size: clamp(14px, 1.4vw, 22px); font-weight: 600;
-      margin: clamp(6px, 0.8vw, 12px) 0 clamp(6px, 0.8vw, 12px);
-    }
-    .cc-avg-u { font-size: clamp(9px, 0.65vw, 12px); color: var(--tx2); font-family: var(--f); font-weight: 300; }
-    .cc-bars  { display: flex; flex-direction: row; gap: clamp(4px, 0.5vw, 8px); height: clamp(44px, 5vw, 72px); align-items: flex-end; }
-    .cc-brow  { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; height: 100%; }
+    .cc-brow  { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; height: 100%; }
     .cc-btrack-v {
       flex: 1; width: 100%;
       background: var(--s2); border-radius: 3px 3px 0 0;
       display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden;
     }
     .cc-bfill-v { width: 100%; border-radius: 3px 3px 0 0; transition: height .7s var(--ease); }
-    .cbf-or   { background: var(--or); box-shadow: 0 0 5px rgba(255,106,20,.3); }
-    .cbf-bl   { background: #4076FA;  box-shadow: 0 0 5px rgba(64,118,250,.3); }
-    .cc-blbl  { font-size: clamp(7px, 0.6vw, 10px); color: var(--tx2); text-align: center; white-space: nowrap; }
-    .cc-bval  { font-family: var(--mono); font-size: clamp(7px, 0.6vw, 10px); text-align: center; }
-    .cbv-or   { color: var(--or); }
-    .cbv-bl   { color: #4076FA; }
+    .cbf-or { background: var(--or); box-shadow: 0 0 4px rgba(255,106,20,.3); }
+    .cbf-bl { background: var(--blue); box-shadow: 0 0 4px rgba(64,118,250,.3); }
+    .cc-blbl {
+      font-size: clamp(6px, 0.52vw, 9px); color: var(--tx2);
+      text-align: center; white-space: nowrap;
+    }
+    .cc-bval {
+      font-family: var(--mono); font-size: clamp(6px, 0.55vw, 10px); text-align: center; font-weight: 600;
+    }
+    .cbv-or { color: var(--or); }
+    .cbv-bl { color: var(--blue); }
 
-    /* ─── QR BAR (bottom of left panel) ──────────────────── */
+    /* ─── QR BAR ── */
     .qr-bar {
-      flex: 0 0 20%;
+      flex: 0 0 23%;
       border-top: 1px solid var(--bd);
-      display: flex; align-items: center; gap: 24px;
-      padding: 12px 0;
+      display: flex; align-items: center; gap: 20px;
+      padding: 10px 0;
       overflow: hidden;
     }
     .qr-big {
-      flex-shrink: 0;
-      aspect-ratio: 1 / 1;
-      height: 100%;
-      max-height: 100%;
+      flex-shrink: 0; aspect-ratio: 1/1; height: 100%; max-height: 100%;
       background: var(--s1); border-radius: 10px; overflow: hidden;
       border: 1px solid var(--bdo);
     }
     .qr-big img { width: 100%; height: 100%; display: block; object-fit: contain; }
-    .qr-big img { width: 100%; height: 100%; display: block; }
-    .qr-info { display: flex; flex-direction: column; gap: 6px; }
+    .qr-info { display: flex; flex-direction: column; gap: 5px; }
     .qr-scan-lbl {
       font-size: 11px; font-weight: 700; letter-spacing: .12em;
       text-transform: uppercase; color: var(--or);
     }
-    .qr-cta { font-size: 24px; font-weight: 700; line-height: 1.15; }
-    .qr-url { font-family: var(--mono); font-size: 13px; color: var(--tx2); }
-    /* ─── RIGHT PANEL — stats ────────────────────────────── */
+    .qr-cta { font-size: 22px; font-weight: 700; line-height: 1.15; }
+    .qr-url { font-family: var(--mono); font-size: 12px; color: var(--tx2); }
+
+    /* ─── RIGHT PANEL ── */
     .panel-r {
       flex: 0 0 30%;
-      padding: 20px 32px 20px 16px;
-      display: flex; flex-direction: column; gap: 14px;
+      padding: 18px 28px 18px 14px;
+      display: flex; flex-direction: column; gap: 13px;
       overflow-y: auto;
     }
     .panel-r::-webkit-scrollbar { width: 3px; }
@@ -208,111 +207,60 @@
       text-transform: uppercase; color: var(--tx3); margin-bottom: 7px;
     }
 
-    /* stat card variants */
-    .sc {
-      background: var(--s1); border: 1px solid var(--bd);
-      border-radius: 8px; padding: 14px 16px;
-    }
-    .sc-or {
-      background: var(--or-dim); border: 1px solid var(--bdo);
-      border-radius: 8px; padding: 14px 16px;
-    }
+    .sc    { background: var(--s1); border: 1px solid var(--bd);  border-radius: 8px; padding: 13px 15px; }
+    .sc-or { background: var(--or-dim); border: 1px solid var(--bdo); border-radius: 8px; padding: 13px 15px; }
 
-    /* count display */
     .count-big {
-      font-family: var(--mono); font-size: 48px; font-weight: 600;
-      color: var(--tx); line-height: 1;
-      transition: all .3s var(--ease);
+      font-family: var(--mono); font-size: 46px; font-weight: 600;
+      color: var(--tx); line-height: 1; transition: all .3s var(--ease);
     }
     .count-unit { font-size: 14px; color: var(--tx2); margin-top: 4px; }
 
-    /* top project */
     .top1-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
     .top1-icon { font-size: 20px; }
-    .top1-name { font-size: 15px; font-weight: 500; }
-    .top1-val { font-family: var(--mono); font-size: 26px; font-weight: 600; color: var(--or); }
+    .top1-name { font-size: 14px; font-weight: 500; }
+    .top1-val { font-family: var(--mono); font-size: 24px; font-weight: 600; color: var(--or); }
 
-    /* gap card */
-    .gap-name { font-size: 14px; font-weight: 500; margin-bottom: 8px; }
-    .gap-vs {
-      display: flex; align-items: center;
-      gap: 10px; flex-wrap: wrap;
-    }
+    .gap-name { font-size: 13px; font-weight: 500; margin-bottom: 8px; }
+    .gap-vs { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .gap-side { display: flex; flex-direction: column; gap: 2px; }
     .gap-who { font-size: 10px; color: var(--tx3); }
     .gap-n  { font-family: var(--mono); font-size: 20px; font-weight: 600; }
     .gn-or  { color: var(--or); }
-    .gn-gr  { color: var(--tx2); }
+    .gn-gr  { color: var(--blue); }
     .gap-sep { font-size: 16px; color: var(--tx3); }
 
-    /* welfare */
     .wf-pct { font-family: var(--mono); font-size: 32px; font-weight: 600; color: var(--or); }
     .wf-sub { font-size: 12px; color: var(--tx2); margin-top: 5px; line-height: 1.5; }
 
-    /* recent */
     .rec-list { display: flex; flex-direction: column; gap: 5px; flex: 1; overflow-y: auto; }
     .rec-list::-webkit-scrollbar { width: 2px; }
     .rec-list::-webkit-scrollbar-thumb { background: var(--s3); }
     .rec-item {
       background: var(--s1); border: 1px solid var(--bd);
-      border-radius: 6px; padding: 9px 12px;
+      border-radius: 6px; padding: 8px 11px;
     }
     .rec-item.new-item { animation: slideIn .4s var(--ease) both; }
-    @keyframes slideIn {
-      from { opacity:0; transform:translateX(12px); }
-      to   { opacity:1; transform:translateX(0); }
-    }
-    .rec-top { font-size: 12px; font-weight: 500; margin-bottom: 2px; }
+    @keyframes slideIn { from{opacity:0;transform:translateX(10px);}to{opacity:1;transform:translateX(0);} }
+    .rec-top { font-size: 11px; font-weight: 500; margin-bottom: 2px; }
     .rec-top em { color: var(--or); font-style: normal; }
     .rec-item.rec-first { background: var(--or-dim); border-color: var(--bdo); }
-    .rec-first .rec-top { font-size: 13px; }
-    .rec-highlight { color: var(--or); font-weight: 700; font-size: 15px; }
+    .rec-first .rec-top { font-size: 12px; }
+    .rec-highlight { color: var(--or); font-weight: 700; font-size: 13px; }
     .rec-amount    { font-family: var(--mono); font-weight: 700; color: var(--or); }
     .rec-time { font-size: 10px; color: var(--tx2); font-family: var(--mono); }
 
-    /* QR — prominent */
-    .qr-prominent {
-      margin-top: auto;
-      background: var(--or-dim);
-      border: 1px solid var(--bdo);
-      border-radius: 10px;
-      padding: 16px 18px;
-      animation: qrPulse 2.5s ease-in-out infinite;
-    }
-    @keyframes qrPulse {
-      0%,100% { box-shadow: 0 0 0 0 rgba(255,106,20,0.35); }
-      50%      { box-shadow: 0 0 0 8px rgba(255,106,20,0); }
-    }
-    .qr-p-inner { display: flex; align-items: center; gap: 16px; }
-    .qr-p-box {
-      width: 100px; height: 100px; flex-shrink: 0;
-      background: var(--s1); border-radius: 8px; overflow: hidden;
-      border: 1px solid var(--bdo);
-    }
-    .qr-p-box img { width: 100%; height: 100%; display: block; }
-    .qr-p-label {
-      font-size: 11px; font-weight: 700; letter-spacing: .1em;
-      text-transform: uppercase; color: var(--tx2); margin-bottom: 2px;
-    }
-    .qr-p-cta {
-      font-size: 22px; font-weight: 700; color: var(--or);
-      line-height: 1.1; margin-bottom: 8px;
-    }
-    .qr-p-url { font-family: var(--mono); font-size: 12px; color: var(--tx2); }
-
-    /* ─── FOOTER (simplified) ─────────────────────────────── */
+    /* ─── FOOTER ── */
     .footer {
-      height: 44px; min-height: 44px;
+      height: 40px; min-height: 40px;
       border-top: 1px solid var(--bd);
       display: flex; align-items: center;
       padding: 0 32px; gap: 16px;
     }
     .footer-gap { flex: 1; }
     .footer-updated { font-size: 11px; color: var(--tx3); font-family: var(--mono); }
-    .footer-demo {
-      font-size: 10px; font-weight: 700; letter-spacing: .08em;
-      text-transform: uppercase; color: #E8B84B;
-      background: rgba(232,184,75,.1); border: 1px solid rgba(232,184,75,.2);
+    .footer-badge {
+      font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
       padding: 3px 8px; border-radius: 3px;
     }
   </style>
@@ -327,89 +275,86 @@
 
 const { useState, useEffect, useMemo, useRef, useCallback } = React;
 
-const SHEET_JSON_URL = 'https://script.google.com/macros/s/AKfycbzMtmWlxXNTywR1iwhSoQdFX0_u_atrsM0P74qjEpEnmn2VB8WALPMKJR7j08Q6-TM1/exec';
+const SHEET_JSON_URL = 'https://script.google.com/macros/s/AKfycbywO-O9qzJLcaC3g3Fw2JUtlCTIINuID4uCf6D9x_eAhzk17X7_Xe9Whm96bCGvXtIV/exec';
 const BOOTH_URL = 'https://ppleculture-budget.vercel.app';
-const REAL_TOTAL = 3855;
 
+/* Same 12-category dataset as Mobile Booth */
 const PROJECTS = [
-{ id: 'film',     icon: '🎬', name: 'ทุนหนัง/ซีรีส์',          agency: 'กรมส่งเสริมวัฒนธรรม',        real: 104  },
-{ id: 'welfare',  icon: '🛡️', name: 'สวัสดิการศิลปินอิสระ',    agency: 'ไม่มีหน่วยงานรับผิดชอบ',     real: 0    },
-{ id: 'music',    icon: '🎵', name: 'ดนตรี / Music Awards',     agency: 'กรมส่งเสริมวัฒนธรรม',        real: 43   },
-{ id: 'game',     icon: '🎮', name: 'เกม Soft Power ไทย',       agency: 'กรมส่งเสริมวัฒนธรรม',        real: 37   },
-{ id: 'perform',  icon: '🎭', name: 'พื้นที่ศิลปะการแสดง',     agency: 'กรมส่งเสริมวัฒนธรรม',        real: 33   },
-{ id: 'book',     icon: '📚', name: 'หนังสือและวรรณกรรม',      agency: 'กรมส่งเสริมวัฒนธรรม',        real: 45   },
-{ id: 'cea',      icon: '🏙️', name: 'เศรษฐกิจสร้างสรรค์ (CEA)',agency: 'สำนักนายกรัฐมนตรี',           real: 566  },
-{ id: 'heritage', icon: '🏛️', name: 'โบราณสถาน / มรดกฯ',       agency: 'กรมศิลปากร',                  real: 2809 },
-{ id: 'forum',    icon: '🎪', name: 'Soft Power Forum',         agency: 'กรมส่งเสริมวัฒนธรรม',        real: 77   },
-{ id: 'archive',  icon: '🎞️', name: 'หอภาพยนตร์แห่งชาติ',     agency: 'หอภาพยนตร์ (องค์การมหาชน)',   real: 141  }];
+  { id:'heritage', icon:'🏛️', name:'โบราณสถาน/มรดกวัฒนธรรม',     realBaht:2809.0, realPct:58.0 },
+  { id:'film',     icon:'🎬', name:'หนัง/ซีรีส์/แอนิเมชัน',        realBaht:798.5,  realPct:16.5 },
+  { id:'intl',     icon:'🌐', name:'นิทรรศการ/เทศกาลนานาชาติ',     realBaht:361.8,  realPct:7.5  },
+  { id:'cea',      icon:'🏙️', name:'เศรษฐกิจสร้างสรรค์',           realBaht:293.6,  realPct:6.1  },
+  { id:'game',     icon:'🎮', name:'เกม/แอนิเมชัน/ดิจิทัล',        realBaht:199.3,  realPct:4.1  },
+  { id:'jewelry',  icon:'💎', name:'เครื่องประดับ',                 realBaht:190.4,  realPct:3.8  },
+  { id:'fashion',  icon:'👗', name:'แฟชัน',                         realBaht:158.1,  realPct:3.3  },
+  { id:'perform',  icon:'🎭', name:'ศิลปะการแสดง',                 realBaht:72.2,   realPct:1.5  },
+  { id:'book',     icon:'📚', name:'หนังสือ/วรรณกรรม',             realBaht:58.1,   realPct:1.2  },
+  { id:'design',   icon:'✏️', name:'ออกแบบ',                        realBaht:47.4,   realPct:1.0  },
+  { id:'music',    icon:'🎵', name:'ดนตรี',                         realBaht:44.1,   realPct:0.9  },
+  { id:'welfare',  icon:'🛡️', name:'ทุนตรง/สวัสดิการศิลปิน',      realBaht:0,      realPct:0    },
+];
 
-
-const AGENCY_COLORS = {
-  'กรมส่งเสริมวัฒนธรรม':       { bg: 'rgba(255,106,20,0.14)',  color: '#FF6A14', border: 'rgba(255,106,20,0.35)' },
-  'ไม่มีหน่วยงานรับผิดชอบ':    { bg: 'rgba(255,69,58,0.14)',   color: '#FF453A', border: 'rgba(255,69,58,0.35)'  },
-  'สำนักนายกรัฐมนตรี':          { bg: 'rgba(64,118,250,0.14)',  color: '#4076FA', border: 'rgba(64,118,250,0.35)' },
-  'กรมศิลปากร':                  { bg: 'rgba(52,199,89,0.14)',   color: '#34C759', border: 'rgba(52,199,89,0.35)'  },
-  'หอภาพยนตร์ (องค์การมหาชน)': { bg: 'rgba(175,82,222,0.14)',  color: '#AF52DE', border: 'rgba(175,82,222,0.35)' },
-};
-const DEFAULT_AGENCY_COLOR = { bg: 'var(--s3)', color: 'var(--tx3)', border: 'var(--bd)' };
+/* Demo data while waiting for real responses */
 const DEMO_DATA = {
   count: 42,
   averages: {
-    film: 24, welfare: 27, music: 14, game: 11,
-    perform: 8, book: 7, cea: 4, heritage: 3, forum: 4, archive: 2
+    heritage:18, film:16, intl:10, cea:9, game:8,
+    jewelry:5, fashion:6, perform:5, book:4, design:4, music:5, welfare:22
   },
   welfareGtZero: 78,
   recent: [
-  { top: 'ทุนตรงศิลปิน', topVal: 35, second: 'ภาพยนตร์', secondVal: 25, ts: '2 นาทีที่แล้ว' },
-  { top: 'ภาพยนตร์', topVal: 40, second: 'ดนตรี', secondVal: 20, ts: '5 นาทีที่แล้ว' },
-  { top: 'ทุนตรงศิลปิน', topVal: 30, second: 'เกม Soft Power', secondVal: 22, ts: '8 นาทีที่แล้ว' },
-  { top: 'ดนตรี', topVal: 28, second: 'หนังสือ', secondVal: 18, ts: '11 นาทีที่แล้ว' },
-  { top: 'เศรษฐกิจสร้างสรรค์', topVal: 45, second: 'ทุนตรงศิลปิน', secondVal: 30, ts: '15 นาทีที่แล้ว' },
-  { top: 'ภาพยนตร์', topVal: 50, second: 'เกม Soft Power', secondVal: 15, ts: '18 นาทีที่แล้ว' }]
-
+    { top:'ทุนตรงศิลปิน', topVal:35, second:'หนัง/ซีรีส์', secondVal:25, ts:'2 นาทีที่แล้ว' },
+    { top:'หนัง/ซีรีส์', topVal:40, second:'ดนตรี', secondVal:20, ts:'5 นาทีที่แล้ว' },
+    { top:'เกม/ดิจิทัล', topVal:28, second:'เทศกาลนานาชาติ', secondVal:18, ts:'9 นาทีที่แล้ว' },
+    { top:'เศรษฐกิจสร้างสรรค์', topVal:45, second:'ทุนตรงศิลปิน', secondVal:30, ts:'14 นาทีที่แล้ว' },
+    { top:'หนัง/ซีรีส์', topVal:50, second:'เกม/ดิจิทัล', secondVal:15, ts:'18 นาทีที่แล้ว' },
+  ]
 };
 
-/* ── Fetch with Apps Script CORS handling ── */
+/* ── Fetch with CORS handling ── */
 async function fetchSheetData(url) {
-  const res = await fetch(url, {
-    method: 'GET',
-    redirect: 'follow',
-    cache: 'no-store',
-    headers: { 'Accept': 'application/json' },
-  });
+  const res = await fetch(url, { method:'GET', redirect:'follow', cache:'no-store' });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
 
-/* ── Parse Apps Script JSON response ── */
+/* ── Parse Apps Script response — header-name based ── */
 function parseRows(rows) {
-  const data = rows.slice(1).filter((r) => r.length > 2);
+  if (!rows || rows.length < 2) return null;
+  const headers = rows[0]; // ['timestamp','session_id','heritage','film',...]
+  const data = rows.slice(1).filter(r => r.length > 2);
   if (data.length === 0) return null;
-  const ids = PROJECTS.map((p) => p.id);
 
+  /* build column index map from headers */
+  const colIdx = {};
+  headers.forEach((h, i) => { if (h) colIdx[String(h).trim()] = i; });
+
+  const ids = PROJECTS.map(p => p.id);
   const averages = {};
-  ids.forEach((id, i) => {
-    const vals = data.map((r) => parseFloat(r[i + 2]) || 0);
-    averages[id] = vals.reduce((s, v) => s + v, 0) / data.length;
+  ids.forEach(id => {
+    const ci = colIdx[id];
+    if (ci === undefined) { averages[id] = 0; return; }
+    const vals = data.map(r => parseFloat(r[ci]) || 0);
+    averages[id] = vals.reduce((s, v) => s + v, 0) / vals.length;
   });
 
-  const welfareIdx = 1; // welfare is index 1 in PROJECTS
-  const welfareGtZero = Math.round(
-    data.filter((r) => (parseFloat(r[welfareIdx + 2]) || 0) > 0).length / data.length * 100
-  );
+  const wCi = colIdx['welfare'];
+  const welfareGtZero = wCi !== undefined
+    ? Math.round(data.filter(r => (parseFloat(r[wCi]) || 0) > 0).length / data.length * 100)
+    : 0;
 
-  const recent = data.slice(-30).reverse().map((row) => {
+  const recent = data.slice(-30).reverse().map(row => {
     const allocs = {};
-    ids.forEach((id, i) => {allocs[id] = parseFloat(row[i + 2]) || 0;});
+    ids.forEach(id => { const ci = colIdx[id]; allocs[id] = ci !== undefined ? (parseFloat(row[ci]) || 0) : 0; });
     const sorted = [...PROJECTS].sort((a, b) => allocs[b.id] - allocs[a.id]);
     return {
       top: sorted[0].name.slice(0, 16),
       topVal: Math.round(allocs[sorted[0].id]),
-      second: (sorted[1] && allocs[sorted[1].id] > 0) ? sorted[1].name.slice(0, 16) : '',
-      secondVal: (sorted[1] && allocs[sorted[1].id] > 0) ? Math.round(allocs[sorted[1].id]) : 0,
+      second: allocs[sorted[1]?.id] > 0 ? sorted[1].name.slice(0, 14) : '',
+      secondVal: sorted[1] ? Math.round(allocs[sorted[1].id]) : 0,
       ts: (() => {
-        try {return new Date(row[0]).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });}
-        catch (_) {return '—';}
+        try { return new Date(row[0]).toLocaleTimeString('th-TH', { hour:'2-digit', minute:'2-digit' }); }
+        catch (_) { return '—'; }
       })()
     };
   });
@@ -422,8 +367,7 @@ function useCountUp(target, duration = 700) {
   const [val, setVal] = useState(target);
   const prevRef = useRef(target);
   useEffect(() => {
-    const from = prevRef.current;
-    prevRef.current = target;
+    const from = prevRef.current; prevRef.current = target;
     if (from === target) return;
     const start = performance.now();
     const tick = (now) => {
@@ -433,74 +377,68 @@ function useCountUp(target, duration = 700) {
       if (p < 1) requestAnimationFrame(tick);
     };
     requestAnimationFrame(tick);
-  }, [target, duration]);
+  }, [target]);
   return val;
 }
 
-/* ── 5×2 Card Grid ── */
-function CardGrid({ data }) {
-  const avgTotal = useMemo(
-    () => Object.values(data.averages).reduce((s, v) => s + v, 0),
-    [data]
-  );
-  const sorted = useMemo(() =>
-    [...PROJECTS]
-      .map(p => ({ ...p, avg: data.averages[p.id] || 0 }))
-      .sort((a, b) => b.avg - a.avg),
-  [data]);
+/* ── Single card ── */
+function ProjCard({ p, rank, isTop }) {
+  /* userPct = average % allocated (since MAX=100, avg value IS %) */
+  const userPct = p.avg;
+  const govPct  = p.realPct;
+  /* normalise bars within each card to make both visible */
+  const maxPct = Math.max(userPct, govPct, 0.5);
+  const uH = (userPct / maxPct * 100).toFixed(1);
+  const gH = (govPct  / maxPct * 100).toFixed(1);
 
   return (
-    <div className="cgrid">
-      {sorted.map((p, idx) => {
-        const rank   = idx + 1;
-        const isTop  = rank <= 3;
-        const youPct = avgTotal > 0 ? p.avg / avgTotal * 100 : 0;
-        const govPct = p.real / REAL_TOTAL * 100;
-        return (
-          <div key={p.id} className={`ccard${p.avg === 0 ? ' ccard--zero' : ''}`}>
-            <div className={`cc-rank${isTop ? ' cc-rank--top' : ''}`}>อันดับ {rank}</div>
-            <div className="cc-icon">{p.icon}</div>
-            <div className="cc-name" style={{ fontWeight: isTop ? 700 : 400 }}>{p.name}</div>
-            <div className="cc-agency" style={(() => { const c = AGENCY_COLORS[p.agency] || DEFAULT_AGENCY_COLOR; return { background: c.bg, color: c.color, borderColor: c.border }; })()}>{p.agency}</div>
-            <div className="cc-spacer" />
-            <div className="cc-avg" style={{ color: isTop ? 'var(--or)' : 'var(--tx2)', fontSize: isTop ? '20px' : '17px' }}>
-              {p.avg.toFixed(1)}<span className="cc-avg-u"> M avg</span>
-            </div>
-            <div className="cc-bars">
-              <div className="cc-brow">
-                <span className="cc-bval cbv-or">{youPct.toFixed(1)}%</span>
-                <div className="cc-btrack-v"><div className="cc-bfill-v cbf-or" style={{ height: `${youPct}%` }} /></div>
-                <span className="cc-blbl">ประชาชน</span>
-              </div>
-              <div className="cc-brow">
-                <span className="cc-bval cbv-bl">{p.real === 0 ? '0%' : govPct.toFixed(1)+'%'}</span>
-                <div className="cc-btrack-v"><div className="cc-bfill-v cbf-bl" style={{ height: `${govPct}%` }} /></div>
-                <span className="cc-blbl">งบรัฐ</span>
-              </div>
-            </div>
-          </div>
-        );
-      })}
+    <div className={`ccard${p.avg === 0 ? ' ccard--zero' : ''}${isTop ? ' ccard--top' : ''}`}>
+      <div className={`cc-rank${isTop ? ' cc-rank--top' : ''}`}>อันดับ {rank}</div>
+      <div className="cc-icon">{p.icon}</div>
+      <div className="cc-name" style={{ fontWeight: isTop ? 700 : 400 }}>{p.name}</div>
+      <div className="cc-spacer" />
+      <div className="cc-bars">
+        <div className="cc-brow">
+          <span className="cc-bval cbv-or">{userPct.toFixed(1)}%</span>
+          <div className="cc-btrack-v"><div className="cc-bfill-v cbf-or" style={{ height:`${uH}%` }} /></div>
+          <span className="cc-blbl">ประชาชน</span>
+        </div>
+        <div className="cc-brow">
+          <span className="cc-bval cbv-bl">{govPct > 0 ? govPct.toFixed(1)+'%' : '0%'}</span>
+          <div className="cc-btrack-v"><div className="cc-bfill-v cbf-bl" style={{ height:`${gH}%` }} /></div>
+          <span className="cc-blbl">งบรัฐ</span>
+        </div>
+      </div>
     </div>
   );
 }
 
-/* ── QR Code placeholder (geometric stand-in) ── */
-function QRPlaceholder() {
-  return (
-    <div style={{ padding: 6, display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gap: 2, width: 76, height: 76 }}>
-      {Array.from({ length: 49 }, (_, i) => {
-        // deterministic pattern based on index
-        const on = [0, 1, 2, 3, 4, 5, 6, 7, 13, 14, 20, 21, 27, 28, 34, 35, 41, 42, 43, 44, 45, 46, 47, 48, 8, 15, 22, 29, 36].includes(i) ||
-        Math.sin(i * 13.7 + 3.1) * 100 % 7 > 3.5;
-        return <span key={i} style={{
-          background: on ? 'var(--or)' : 'transparent',
-          borderRadius: 1,
-          opacity: on ? 0.8 : 0
-        }} />;
-      })}
-    </div>);
+/* ── 3 + 4 + 4 Card Grid — 11 items (exclude welfare, shown in right panel) ── */
+function CardGrid({ data }) {
+  const sorted = useMemo(() =>
+    [...PROJECTS]
+      .filter(p => p.id !== 'welfare')           /* welfare shown separately */
+      .map(p => ({ ...p, avg: data.averages[p.id] || 0 }))
+      .sort((a, b) => b.avg - a.avg),
+  [data]);
 
+  const row1 = sorted.slice(0, 3);   /* largest cards */
+  const row2 = sorted.slice(3, 7);
+  const row3 = sorted.slice(7, 11);  /* smallest cards */
+
+  return (
+    <div className="cgrid-outer">
+      <div className="cgrid-row cgrid-row--lg">
+        {row1.map((p, i) => <ProjCard key={p.id} p={p} rank={i + 1}  isTop={true} />)}
+      </div>
+      <div className="cgrid-row cgrid-row--sm">
+        {row2.map((p, i) => <ProjCard key={p.id} p={p} rank={i + 4}  isTop={false} />)}
+      </div>
+      <div className="cgrid-row cgrid-row--sm">
+        {row3.map((p, i) => <ProjCard key={p.id} p={p} rank={i + 8}  isTop={false} />)}
+      </div>
+    </div>
+  );
 }
 
 /* ── Main App ── */
@@ -514,15 +452,10 @@ function App() {
     try {
       const rows = await fetchSheetData(SHEET_JSON_URL + '?t=' + Date.now());
       const parsed = parseRows(rows);
-      if (parsed) {
-        setData(parsed);
-        setConnState('live');
-      } else {
-        // Sheet empty — connected but no data yet
-        setConnState('live');
-      }
+      if (parsed) { setData(parsed); setConnState('live'); }
+      else setConnState('live');
     } catch (err) {
-      console.error('[TV] fetch error:', err.message);
+      console.error('[TV]', err.message);
       setConnState(prev => prev === 'live' ? 'live' : 'error');
     }
     setLastUpdate(new Date());
@@ -534,24 +467,20 @@ function App() {
     return () => clearInterval(iv);
   }, [fetchData]);
 
-  /* top project */
   const topProject = useMemo(() =>
-  PROJECTS.reduce((best, p) =>
-  (data.averages[p.id] || 0) > (data.averages[best.id] || 0) ? p : best
-  ),
+    PROJECTS.filter(p => p.id !== 'welfare').reduce((best, p) =>
+      (data.averages[p.id] || 0) > (data.averages[best.id] || 0) ? p : best),
   [data]);
 
-  /* biggest gap (user % vs govt %) */
   const gapProject = useMemo(() => {
-    const avgTotal = Object.values(data.averages).reduce((s, v) => s + v, 0);
-    return PROJECTS.map((p) => {
-      const youPct = avgTotal > 0 ? (data.averages[p.id] || 0) / avgTotal * 100 : 0;
-      const govPct = p.real / REAL_TOTAL * 100;
-      return { ...p, youPct, govPct, diff: Math.abs(youPct - govPct) };
+    return PROJECTS.filter(p => p.id !== 'welfare').map(p => {
+      const userPct = data.averages[p.id] || 0;
+      const govPct  = p.realPct;
+      return { ...p, userPct, govPct, diff: Math.abs(userPct - govPct) };
     }).reduce((best, curr) => curr.diff > best.diff ? curr : best);
   }, [data]);
 
-  const timeStr = lastUpdate.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const timeStr = lastUpdate.toLocaleTimeString('th-TH', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
 
   return (
     <div className="app">
@@ -561,7 +490,7 @@ function App() {
         <img src="assets/logo-mark-white.png" alt="People's Culture" className="hdr-logo" />
         <div className="hdr-divider"></div>
         <div className="hdr-title">
-          ประชาชนจัดสรรงบวัฒนธรรมและเศรษฐกิจสร้างสรรค์อย่างไร
+          ประชาชนจัดสรรงบ<em>วัฒนธรรม</em>อย่างไร — แฮกงบวัฒนธรรม 70
         </div>
         <div className="hdr-gap" />
         <div className={`live-badge${connState === 'connecting' ? ' connecting' : connState === 'error' ? ' error' : ''}`}>
@@ -576,34 +505,34 @@ function App() {
       {/* ── Main ── */}
       <div className="main">
 
-        {/* Left — chart */}
+        {/* Left — 3+4+4 grid */}
         <div className="panel-l">
           <div className="panel-header">
-            <div className="panel-title">จัดอันดับงบจากผลลัพธ์ของ<em>ประชาชน</em></div>
-            <div className="panel-sub">ค่าเฉลี่ยจาก {data.count} คน (% ของงบรวม) เทียบกับงบประมาณจริงปี 2569</div>
+            <div className="panel-title">จัดอันดับจากผลลัพธ์ของ<em>ประชาชน</em></div>
+            <div className="panel-sub">ค่าเฉลี่ยจาก {data.count} คน (%) เทียบกับงบประมาณจริงปี 2569</div>
           </div>
+
           <CardGrid data={data} />
 
-          {/* Large QR below grid */}
+          {/* QR bar */}
           <div className="qr-bar">
             <div className="qr-big">
               <img
                 src={`https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=${encodeURIComponent(BOOTH_URL)}&bgcolor=131210&color=FF6A14&margin=6`}
                 alt="QR"
-                onError={(e) => { e.target.style.display='none'; }}
-              />
+                onError={(e) => { e.target.style.display='none'; }} />
             </div>
             <div className="qr-info">
               <span className="qr-scan-lbl">สแกน QR เพื่อร่วมจัดสรรงบ</span>
+              <span className="qr-cta">ลองมาเป็น<br />รมต. วัฒนธรรม</span>
               <span className="qr-url">{BOOTH_URL}</span>
             </div>
           </div>
         </div>
 
-        {/* Right — stats */}
+        {/* Right — stats (unchanged) */}
         <div className="panel-r">
 
-          {/* Top project */}
           <div>
             <div className="stat-lbl">โครงการที่ได้รับงบสูงสุด</div>
             <div className="sc-or">
@@ -612,12 +541,11 @@ function App() {
                 <span className="top1-name">{topProject.name}</span>
               </div>
               <div className="top1-val">
-                {(data.averages[topProject.id] || 0).toFixed(1)} ล้านบาท
+                {(data.averages[topProject.id] || 0).toFixed(1)}%
               </div>
             </div>
           </div>
 
-          {/* Biggest gap */}
           <div>
             <div className="stat-lbl">Insight ประชาชน vs รัฐ</div>
             <div className="sc">
@@ -625,54 +553,46 @@ function App() {
               <div className="gap-vs">
                 <div className="gap-side">
                   <div className="gap-who">ประชาชนให้เฉลี่ย</div>
-                  <div className="gap-n gn-or">{(data.averages[gapProject.id] || 0).toFixed(1)}M</div>
+                  <div className="gap-n gn-or">{(gapProject.userPct || 0).toFixed(1)}%</div>
                 </div>
                 <div className="gap-sep">vs</div>
                 <div className="gap-side">
                   <div className="gap-who">รัฐจัดสรร</div>
-                  <div className="gap-n gn-gr">{gapProject.real}M</div>
+                  <div className="gap-n gn-gr">{gapProject.govPct}%</div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Welfare stat — political statement */}
           <div>
             <div className="stat-lbl">สวัสดิการศิลปินอิสระ — งบรัฐ: 0 บาท</div>
             <div className="sc">
               <div className="wf-pct">{data.welfareGtZero}%</div>
               <div className="wf-sub">
                 ของผู้ร่วมกิจกรรม ให้งบสวัสดิการศิลปิน<br />
-                ขณะที่งบประมาณจริงปี 2569 จัดสรร 0 บาท
+                ขณะที่งบปี 2569 จัดสรร 0 บาท
               </div>
             </div>
           </div>
 
-          {/* Recent */}
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden' }}>
             <div className="stat-lbl">ผู้ร่วมล่าสุด</div>
             <div className="rec-list">
               {(data.recent || []).map((r, i) =>
-              <div key={i} className={`rec-item new-item${i === 0 ? ' rec-first' : ''}`} style={{ animationDelay: `${i * 0.07}s` }}>
+                <div key={i} className={`rec-item new-item${i === 0 ? ' rec-first' : ''}`} style={{ animationDelay:`${i * 0.07}s` }}>
                   <div className="rec-top">
                     {i === 0
                       ? <>{r.second
-                          ? <>ให้ <span className="rec-highlight">{r.top}</span> <span className="rec-amount">{r.topVal}M</span> · <span className="rec-highlight" style={{fontSize:13}}>{r.second}</span> <span className="rec-amount">{r.secondVal}M</span></>
+                          ? <>ให้ <span className="rec-highlight">{r.top}</span> <span className="rec-amount">{r.topVal}M</span> · <span className="rec-highlight" style={{fontSize:12}}>{r.second}</span> <span className="rec-amount">{r.secondVal}M</span></>
                           : <>ให้ <span className="rec-highlight">{r.top}</span> <span className="rec-amount">{r.topVal}M</span></>
                         }</>
-                      : <>{r.second
-                          ? <>ให้ {r.top} {r.topVal}M · {r.second} {r.secondVal}M</>
-                          : <>ให้ {r.top} {r.topVal}M</>
-                        }</>
+                      : <>{r.second ? <>ให้ {r.top} {r.topVal}M · {r.second} {r.secondVal}M</> : <>ให้ {r.top} {r.topVal}M</>}</>
                     }
                   </div>
                   <div className="rec-time">{r.ts}</div>
-                </div>
-              )}
+                </div>)}
             </div>
           </div>
-
-          {/* QR — removed from right panel, now in footer */}
 
         </div>
       </div>
@@ -680,13 +600,12 @@ function App() {
       {/* ── Footer ── */}
       <footer className="footer">
         <div className="footer-gap" />
-        {connState === 'error' && <span className="footer-demo" style={{color:'#FF453A',borderColor:'rgba(255,69,58,.3)',background:'rgba(255,69,58,.1)'}}>ไม่พบข้อมูล — ตรวจ Apps Script doGet</span>}
-        {connState === 'connecting' && <span className="footer-demo" style={{color:'var(--tx3)',borderColor:'var(--bd)',background:'var(--s2)'}}>กำลังเชื่อมต่อ…</span>}
+        {connState === 'error' && <span className="footer-badge" style={{color:'#FF453A',borderColor:'rgba(255,69,58,.3)',background:'rgba(255,69,58,.1)',border:'1px solid'}}>ไม่พบข้อมูล</span>}
+        {connState === 'connecting' && <span className="footer-badge" style={{color:'var(--tx3)',border:'1px solid var(--bd)',background:'var(--s2)'}}>กำลังเชื่อมต่อ…</span>}
         <span className="footer-updated">อัปเดต {timeStr} · ทุก 10 วินาที</span>
       </footer>
 
     </div>);
-
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(<App />);
