@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Decision Booth — ลองมาเป็น รมต. กระทรวงวัฒนธรรม</title>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <style>
@@ -11,11 +11,11 @@
     @font-face { font-family:"Anakotmai"; src:url("fonts/anakotmai-bold.woff2") format("woff2"); font-weight:700; font-display:swap; }
 
     :root {
-      --bg:#0B0A08; --s1:#131210; --s2:#1D1C19; --s3:#252320;
-      --bd:rgba(255,255,255,0.07); --bdo:rgba(255,106,20,0.28);
+      --bg:#0B0A08; --s1:#161512; --s2:#201F1C; --s3:#2A2925;
+      --bd:rgba(255,255,255,0.09); --bdo:rgba(255,106,20,0.30);
       --or:#FF6A14; --or-dim:rgba(255,106,20,0.10); --glow:0 0 22px rgba(255,106,20,0.28);
-      --tx:#EDE9E3; --tx2:#7A766D; --tx3:#45433E;
-      --red:#FF453A; --blue:#4076FA;
+      --tx:#E8E3DC; --tx2:#A09B93; --tx3:#65615A;
+      --red:#FF6961; --blue:#6B9BFB;
       --f:"Anakotmai","IBM Plex Sans Thai",system-ui,sans-serif;
       --mono:"JetBrains Mono",monospace;
       --ease:cubic-bezier(0.22,1,0.36,1);
@@ -32,6 +32,26 @@
     }
     #root { min-height:100vh; position:relative; z-index:1; }
     .page { max-width:430px; margin:0 auto; min-height:100vh; }
+
+    /* ── RESPONSIVE ── */
+    @media (min-width:600px) {
+      body { display:flex; justify-content:center; align-items:flex-start; }
+      #root { width:100%; }
+      .page { max-width:520px; }
+      .proj-grid { grid-template-columns:repeat(4,1fr); }
+      .sbar { max-width:520px; }
+      .sheet { max-width:520px; }
+      .bfm { max-width:520px; }
+    }
+    @media (min-width:900px) {
+      .page { max-width:560px; }
+      .sbar { max-width:560px; }
+      .sheet { max-width:560px; }
+      .bfm { max-width:560px; }
+      .proj-grid { grid-template-columns:repeat(4,1fr); gap:10px; padding:16px 16px 180px; }
+      .results { padding:0 24px 120px; }
+      .intro { padding:64px 48px; }
+    }
     .pop { animation:popIn .38s var(--ease) both; }
     @keyframes popIn { from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);} }
 
@@ -228,10 +248,10 @@
     .vl-on { color:var(--or); }
     .vl-off { color:var(--tx3); }
 
-    .insight { background:var(--s1); border:1px solid var(--bdo); border-radius:8px; padding:14px 15px; margin-bottom:12px; }
-    .insight-lbl { font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--or); margin-bottom:7px; }
-    .insight-txt { font-size:13px; line-height:1.65; color:var(--tx2); }
-    .insight-txt strong { color:var(--tx); font-weight:500; }
+    .insight { background:var(--s1); border:1px solid rgba(255,106,20,0.16); border-radius:8px; padding:14px 15px; margin-bottom:12px; }
+    .insight-lbl { font-size:10px; font-weight:500; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,106,20,0.7); margin-bottom:7px; }
+    .insight-txt { font-size:13px; line-height:1.72; color:var(--tx2); }
+    .insight-txt strong { color:#C8C3BB; font-weight:500; }
 
     .cmp-table { margin-bottom:24px; }
     .cmp-head {
