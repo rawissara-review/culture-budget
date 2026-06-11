@@ -561,33 +561,33 @@ function ResultsPage({ alloc, onReset }) {
     /* Per-project data from budget_2569.md — analytical tone with personality */
     const insightData = {
       heritage: { agencies:'กรมศิลปากร',
-        note:<><i className="fa-solid fa-landmark" style={{marginRight:6,color:'var(--or)'}}></i><strong>58%</strong> ของงบทั้งหมด — ขณะที่ดนตรี เกม ออกแบบ แฟชันรวมกันได้แค่ <strong>9.3%</strong> <i className="fa-solid fa-face-angry" style={{marginLeft:4}}></i></> },
+        note:<><strong>58%</strong> ของงบทั้งหมด — ขณะที่ดนตรี เกม ออกแบบ แฟชันรวมกันได้แค่ <strong>9.3%</strong> <i className="fa-solid fa-face-angry" style={{marginLeft:4}}></i></> },
       film:     { agencies:'กรมส่งเสริมวัฒนธรรม + หอภาพยนตร์',
-        note:<><i className="fa-solid fa-film" style={{marginRight:6,color:'var(--or)'}}></i>งบส่วนใหญ่เป็นงบเทศกาลและอบรมผู้ผลิต — ทุนตรงสร้างหนังมีแค่ <strong>104 ล้าน</strong> จาก 798.5 ล้าน <i className="fa-solid fa-face-grimace" style={{marginLeft:4}}></i> ช่องว่างระหว่างงบ "ส่งเสริมอุตสาหกรรม" กับเงินที่ถึงมือคนทำหนังจริงๆ ค่อนข้างใหญ่</> },
+        note:<>งบส่วนใหญ่เป็นงบเทศกาลและอบรมผู้ผลิต — ทุนตรงสร้างหนังมีแค่ <strong>104 ล้าน</strong> จาก 798.5 ล้าน <i className="fa-solid fa-face-grimace" style={{marginLeft:4}}></i> ช่องว่างระหว่างงบ "ส่งเสริมอุตสาหกรรม" กับเงินที่ถึงมือคนทำหนังจริงๆ ค่อนข้างใหญ่</> },
       intl:     { agencies:'CEA + สำนักงานศิลปวัฒนธรรมร่วมสมัย + กรมส่งเสริมวัฒนธรรม',
-        note:<><i className="fa-solid fa-globe" style={{marginRight:6,color:'var(--or)'}}></i>กระจายผ่าน 3 หน่วยงาน รวม Soft Power Forum <strong>77 ล้าน</strong> และมหกรรมศิลปะร่วมสมัย <strong>97 ล้าน</strong></> },
+        note:<>โครงการนิทรรศการ/เทศกาลนานาชาติ กระจายผ่าน 3 หน่วยงาน รวม Soft Power Forum <strong>77 ล้าน</strong> และมหกรรมศิลปะร่วมสมัย <strong>97 ล้าน</strong></> },
       cea:      { agencies:'CEA (สำนักนายกรัฐมนตรี)',
-        note:<><i className="fa-solid fa-city" style={{marginRight:6,color:'var(--or)'}}></i>เน้น Creative District และพัฒนา SME — ทิศทางสนับสนุนระบบนิเวศ แต่ยังไม่มีทุนตรงให้ศิลปินอิสระ <i className="fa-solid fa-face-frown" style={{marginLeft:4}}></i></> },
+        note:<>ส่วนใหญ่เน้น Creative District และพัฒนา SME — ทิศทางสนับสนุนระบบนิเวศ แต่ยังไม่มีทุนตรงให้ศิลปินอิสระ <i className="fa-solid fa-face-frown" style={{marginLeft:4}}></i></> },
       game:     { agencies:'DEPA + กรมส่งเสริมวัฒนธรรม + DITP',
-        note:<><i className="fa-solid fa-gamepad" style={{marginRight:6,color:'var(--or)'}}></i>งบ 199 ล้านมาจาก 3 หน่วยงาน แต่ <strong>DEPA (กระทรวงดิจิทัล)</strong> เป็นผู้ลงทุนหลักคนเดียว <strong>138.5 ล้าน</strong> — หน่วยงานวัฒนธรรมโดยตรงรวมกันได้แค่ 60 ล้าน <i className="fa-solid fa-face-frown-open" style={{marginLeft:4}}></i></> },
+        note:<>งบ 199 ล้านมาจาก 3 หน่วยงาน แต่ <strong>DEPA (กระทรวงดิจิทัล)</strong> เป็นผู้ลงทุนหลักคนเดียว <strong>138.5 ล้าน</strong> — หน่วยงานวัฒนธรรมโดยตรงรวมกันได้แค่ 60 ล้าน <i className="fa-solid fa-face-frown-open" style={{marginLeft:4}}></i></> },
       jewelry:  { agencies:'สถาบันวิจัยและพัฒนาอัญมณีฯ (DITP)',
-        note:<><i className="fa-solid fa-gem" style={{marginRight:6,color:'var(--or)'}}></i>ตัวเลข 190 ล้านดูใหญ่ แต่ Soft Power/creative จริงๆ แค่ <strong>8.6 ล้าน</strong> ที่เหลือเป็น R&amp;D มาตรฐานและส่งออก <i className="fa-solid fa-face-meh" style={{marginLeft:4}}></i></> },
+        note:<>ตัวเลข 190 ล้านดูใหญ่ แต่ Soft Power/creative จริงๆ แค่ <strong>8.6 ล้าน</strong> ที่เหลือเป็น R&amp;D มาตรฐานและส่งออก <i className="fa-solid fa-face-meh" style={{marginLeft:4}}></i></> },
       fashion:  { agencies:'DITP (กระทรวงพาณิชย์)',
         note:<>งบ 158 ล้านแบ่งเป็น 2 ประเภท — <strong>งบส่งเสริมการส่งออก</strong> 140 ล้าน vs <strong>งบส่งเสริมการออกแบบ Soft Power</strong> 17.8 ล้าน ส่วนที่สนับสนุนดีไซเนอร์จริงๆ แค่ 11% เท่านั้น <i className="fa-solid fa-face-tired" style={{marginLeft:4}}></i></> },
       perform:  { agencies:'กรมส่งเสริมวัฒนธรรม + สำนักงานศิลปวัฒนธรรมร่วมสมัย',
-        note:<><i className="fa-solid fa-masks-theater" style={{marginRight:6,color:'var(--or)'}}></i>ส่วนใหญ่เป็นงาน ASEAN/นานาชาติ — งบพัฒนาพื้นที่แสดงในประเทศมีแค่ <strong>16 ล้าน</strong> <i className="fa-solid fa-face-meh-blank" style={{marginLeft:4}}></i></> },
+        note:<>ส่วนใหญ่เป็นงาน ASEAN/นานาชาติ — งบพัฒนาพื้นที่แสดงในประเทศมีแค่ <strong>16 ล้าน</strong> <i className="fa-solid fa-face-meh-blank" style={{marginLeft:4}}></i></> },
       book:     { agencies:'กรมส่งเสริมวัฒนธรรม + สำนักงานศิลปวัฒนธรรมร่วมสมัย',
-        note:<><i className="fa-solid fa-book" style={{marginRight:6,color:'var(--or)'}}></i>รวม BL&amp;GL Rights Fair, Writers' Village และงาน Book Fair — งบเน้นการจัดงานและส่งออกลิขสิทธิ์ มากกว่าทุนสนับสนุนนักเขียนอิสระโดยตรง <i className="fa-solid fa-pen-to-square" style={{marginLeft:4}}></i></> },
+        note:<>หนังสือ วรรณกรรม รวม BL&amp;GL Rights Fair, Writers' Village และงาน Book Fair — งบเน้นการจัดงานและส่งออกลิขสิทธิ์ มากกว่าทุนสนับสนุนนักเขียนอิสระโดยตรง <i className="fa-solid fa-pen-to-square" style={{marginLeft:4}}></i></> },
       design:   { agencies:'CEA + สำนักงานศิลปวัฒนธรรมร่วมสมัย + DITP',
-        note:<><i className="fa-solid fa-pen-ruler" style={{marginRight:6,color:'var(--or)'}}></i>DITP ให้ <strong>22.5 ล้าน</strong> เน้น Soft Power ส่งออก — งบ "ส่งเสริมการค้าผ่านการออกแบบ" มีสัดส่วนมากกว่างบ "พัฒนาดีไซเนอร์ในประเทศ"</> },
+        note:<>DITP ให้ <strong>22.5 ล้าน</strong> เน้น Soft Power ส่งออก — งบ "ส่งเสริมการค้าผ่านการออกแบบ" มีสัดส่วนมากกว่างบ "พัฒนาดีไซเนอร์ในประเทศ"</> },
       music:    { agencies:'กรมส่งเสริมวัฒนธรรม + สำนักงานศิลปวัฒนธรรมร่วมสมัย',
-        note:<><i className="fa-solid fa-music" style={{marginRight:6,color:'var(--or)'}}></i>เกือบทั้งหมด (<strong>42.9 ล้าน</strong>) เป็น Thailand Music Awards งานเดียว <i className="fa-solid fa-microphone" style={{margin:'0 3px'}}></i> น้อยกว่างบเกมถึง <strong>4×</strong> และไม่มีทุนตรงให้นักดนตรีอิสระ</> },
+        note:<>เกือบทั้งหมด (<strong>42.9 ล้าน</strong>) เป็น Thailand Music Awards งานเดียว <i className="fa-solid fa-microphone" style={{margin:'0 3px'}}></i> น้อยกว่างบเกมถึง <strong>4×</strong> และไม่มีทุนตรงให้นักดนตรีอิสระ</> },
       welfare:  { agencies:'ไม่มีหน่วยงานรับผิดชอบ',
-        note:<><i className="fa-solid fa-shield-heart" style={{marginRight:6,color:'var(--or)'}}></i>0 บาท. จาก 4 กระทรวง. ไม่มีแม้แต่บรรทัดเดียวในงบสำหรับศิลปินอิสระ <i className="fa-solid fa-face-sad-tear" style={{marginLeft:4}}></i></> },
+        note:<>งบศิลปินอิสระปี69=0 บาท. จาก 4 กระทรวง. ไม่มีแม้แต่บรรทัดเดียวในงบสำหรับศิลปินอิสระ <i className="fa-solid fa-face-sad-tear" style={{marginLeft:4}}></i></> },
     };
 
     const wNote = welfareA > 0 && top.id !== 'welfare'
-      ? <><br /><span style={{color:'var(--tx3)',fontSize:11}}>+ คุณให้ศิลปินอิสระ {welfareA}% — รัฐให้ 0 บาท</span></>
+      ? <><br /><span style={{color:'var(--tx3)',fontSize:11}}>+ คุณให้ศิลปินอิสระ {welfareA}% — รัฐในปี69ให้ 0 บาท</span></>
       : null;
 
     if (isAllEqual) return (
