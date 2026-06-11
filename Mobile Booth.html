@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Decision Booth — ลองเป็น รมต. กระทรวงวัฒนธรรม</title>
+  <title>Decision Booth — ลองมาเป็น รมต. กระทรวงวัฒนธรรม</title>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous">
   <style>
     @font-face { font-family:"Anakotmai"; src:url("fonts/anakotmai-light.woff2") format("woff2"); font-weight:300; font-display:swap; }
     @font-face { font-family:"Anakotmai"; src:url("fonts/anakotmai-medium.woff2") format("woff2"); font-weight:500; font-display:swap; }
@@ -93,37 +94,38 @@
     .btn-ghost:hover { border-color:var(--bdo); color:var(--tx); }
     .btn-sm { padding:12px 20px; font-size:14px; }
 
-    /* ── PLAY HEADER ── */
+    /* ── PLAY HEADER (remaining hero) ── */
     .ph {
       position:sticky; top:0; z-index:20;
-      background:rgba(11,10,8,.94); backdrop-filter:blur(14px);
+      background:rgba(11,10,8,.96); backdrop-filter:blur(14px);
       -webkit-backdrop-filter:blur(14px);
-      border-bottom:1px solid var(--bd); padding:14px 20px 12px;
+      border-bottom:1px solid var(--bd); padding:16px 20px 14px;
     }
-    .ph-label { font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--tx3); margin-bottom:3px; }
-    .ph-row { display:flex; align-items:baseline; gap:7px; }
-    .ph-num { font-family:var(--mono); font-size:42px; font-weight:600; line-height:1; transition:color .2s; }
-    .ph-ok { color:var(--or); }
-    .ph-over { color:var(--red); }
-    .ph-unit { font-size:13px; color:var(--tx2); }
-    .ph-bar { height:2px; background:var(--s2); border-radius:1px; overflow:hidden; margin-top:10px; }
-    .ph-fill { height:100%; border-radius:1px; transition:width .15s var(--ease), background .2s; }
+    .ph-remaining-lbl { font-size:11px; font-weight:500; color:var(--tx3); margin-bottom:2px; letter-spacing:.05em; }
+    .ph-remaining-num {
+      font-family:var(--mono); font-size:52px; font-weight:600; line-height:1;
+      transition:color .2s; color:var(--tx);
+    }
+    .ph-remaining-num.is-zero { color:var(--or); }
+    .ph-remaining-num.is-over { color:var(--red); }
+    .ph-remaining-unit { font-size:15px; color:var(--tx2); margin-left:6px; }
 
     /* ── SQUARE CARD GRID ── */
-    .proj-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; padding:12px 12px 160px; }
+    .proj-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; padding:14px 14px 180px; }
     .sq-card {
       aspect-ratio:1; background:var(--s1); border:1px solid var(--bd);
-      border-radius:12px; display:flex; flex-direction:column;
-      align-items:center; justify-content:center; gap:6px;
-      cursor:pointer; padding:10px 8px; text-align:center;
+      border-radius:16px; display:flex; flex-direction:column;
+      align-items:center; justify-content:center; gap:8px;
+      cursor:pointer; padding:12px 8px; text-align:center;
       transition:border-color .15s, background .15s, transform .1s;
       position:relative;
     }
     .sq-card:active { transform:scale(0.94); }
-    .sq-card--active { border-color:var(--bdo); background:rgba(255,106,20,0.07); }
-    .sq-icon { font-size:26px; line-height:1; }
+    .sq-card--active { border-color:var(--bdo); background:rgba(255,106,20,0.09); }
+    .sq-icon { font-size:26px; line-height:1; color:var(--tx2); transition:color .15s; }
+    .sq-card--active .sq-icon { color:var(--or); }
     .sq-name {
-      font-size:10px; font-weight:500; color:var(--tx2); line-height:1.35;
+      font-size:11px; font-weight:500; color:var(--tx2); line-height:1.35;
       display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
     }
     .sq-card--active .sq-name { color:var(--tx); }
@@ -137,21 +139,15 @@
     /* ── SUBMIT BAR ── */
     .sbar {
       position:fixed; bottom:0; left:50%; transform:translateX(-50%);
-      width:100%; max-width:430px; padding:12px 14px 28px;
-      background:linear-gradient(to top,var(--bg) 62%,transparent); z-index:20;
+      width:100%; max-width:430px; padding:10px 14px 28px;
+      background:linear-gradient(to top,var(--bg) 70%,transparent); z-index:20;
     }
-    .sbar-remaining {
-      display:flex; align-items:baseline; gap:6px;
-      margin-bottom:8px; justify-content:center;
+    .sbar-progress-row {
+      display:flex; align-items:center; gap:10px; margin-bottom:8px;
     }
-    .sbar-remaining-lbl { font-size:11px; color:var(--tx2); }
-    .sbar-remaining-num {
-      font-family:var(--mono); font-size:28px; font-weight:600;
-      color:var(--tx2); transition:color .2s;
-    }
-    .sbar-remaining-num.is-zero { color:var(--or); }
-    .sbar-remaining-num.is-over { color:var(--red); }
-    .sbar-remaining-unit { font-size:12px; color:var(--tx2); }
+    .sbar-bar-wrap { flex:1; height:4px; background:var(--s2); border-radius:2px; overflow:hidden; }
+    .sbar-bar-fill { height:100%; border-radius:2px; transition:width .2s var(--ease), background .2s; }
+    .sbar-num { font-family:var(--mono); font-size:12px; font-weight:600; white-space:nowrap; transition:color .2s; }
 
     /* ── BOTTOM SHEET ── */
     .sheet-overlay {
@@ -166,8 +162,8 @@
     }
     @keyframes sheetUp { from{transform:translateY(100%);}to{transform:translateY(0);} }
     .sheet-handle { width:36px; height:4px; background:var(--bd); border-radius:2px; margin:0 auto 22px; }
-    .sheet-icon { font-size:36px; margin-bottom:6px; text-align:center; }
-    .sheet-name { font-size:18px; font-weight:700; text-align:center; margin-bottom:20px; }
+    .sheet-icon { font-size:22px; color:var(--or); flex-shrink:0; }
+    .sheet-name { font-size:18px; font-weight:700; margin-bottom:20px; }
     .sheet-val-row { display:flex; align-items:baseline; justify-content:center; gap:5px; margin-bottom:4px; }
     .sheet-agency {
       display:inline-flex; align-items:center; gap:5px;
@@ -242,7 +238,7 @@
     .ranklist { display:flex; flex-direction:column; gap:5px; margin-bottom:22px; }
     .ri { display:flex; align-items:center; gap:10px; background:var(--s1); border:1px solid var(--bd); border-radius:6px; padding:11px 13px; }
     .ri-n { font-family:var(--mono); font-size:11px; font-weight:600; color:var(--or); min-width:18px; }
-    .ri-ic { font-size:17px; }
+    .ri-ic { font-size:15px; min-width:18px; text-align:center; color:var(--tx2); }
     .ri-nm { flex:1; font-size:13px; font-weight:500; }
     .ri-vl { font-family:var(--mono); font-size:15px; font-weight:600; }
     .vl-on { color:var(--or); }
@@ -278,8 +274,36 @@
       font-size:11px; color:var(--tx2); line-height:1.7;
     }
 
-    ::-webkit-scrollbar { width:3px; }
-    ::-webkit-scrollbar-thumb { background:var(--s2); border-radius:2px; }
+    /* ── BAR CHART ── */
+    .bc-row { display:flex; flex-direction:column; gap:6px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+    .bc-row:last-child { border-bottom:none; }
+    .bc-head { display:flex; align-items:center; gap:7px; }
+    .bc-icon { font-size:13px; flex-shrink:0; transition:color .2s; }
+    .bc-icon--on  { color:var(--or); }
+    .bc-icon--off { color:var(--tx3); }
+    .bc-name { font-size:12px; color:var(--tx2); flex:1; }
+    .bc-info-btn {
+      width:18px; height:18px; border-radius:50%;
+      background:var(--s2); border:1px solid var(--bd);
+      color:var(--tx3); font-size:9px; font-weight:700;
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer; flex-shrink:0; transition:border-color .15s, color .15s;
+    }
+    .bc-info-btn:hover { border-color:var(--bdo); color:var(--or); }
+    .bc-cols { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+    .bc-side { display:flex; flex-direction:column; gap:3px; }
+    .bc-side-lbl { font-size:9px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
+    .bc-side-lbl-or { color:var(--or); }
+    .bc-side-lbl-bl { color:var(--blue); }
+    .bc-bar-row { display:flex; align-items:center; gap:5px; }
+    .bc-track { flex:1; height:6px; background:var(--s2); border-radius:3px; overflow:hidden; }
+    .bc-fill { height:100%; border-radius:3px; transition:width .6s var(--ease); }
+    .bc-fill-or { background:var(--or); }
+    .bc-fill-bl { background:var(--blue); }
+    .bc-pct { font-family:var(--mono); font-size:10px; font-weight:600; width:30px; text-align:right; flex-shrink:0; }
+    .bc-pct-or { color:var(--or); }
+    .bc-pct-bl { color:var(--blue); opacity:.8; }
+    .bc-detail { margin-top:5px; padding:8px 10px; background:var(--s1); border-radius:6px; font-size:11px; color:var(--tx2); line-height:1.7; }
   </style>
 
   <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
@@ -290,24 +314,25 @@
 <div id="root"></div>
 <script type="text/babel">
 
+
 const { useState, useMemo, useCallback, useEffect, useRef } = React;
 
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbypUhP3ItWxXO4dGxsTihsSJDkFVoLw6HvCH0hBDLsLX0z5dy9TidueDsOvscmtI3pP/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbywO-O9qzJLcaC3g3Fw2JUtlCTIINuID4uCf6D9x_eAhzk17X7_Xe9Whm96bCGvXtIV/exec';
 const MAX = 100;
 
 const PROJECTS = [
-  { id:'heritage', icon:'🏛️', name:'โบราณสถาน/มรดกวัฒนธรรม',       agencies:'กรมศิลปากร',                                   realBaht:2809.0, realPct:58.0 },
-  { id:'film',     icon:'🎬', name:'หนัง/ซีรีส์/แอนิเมชัน',          agencies:'กรมส่งเสริมวัฒนธรรม + หอภาพยนตร์',           realBaht:798.5,  realPct:16.5 },
-  { id:'intl',     icon:'🌐', name:'นิทรรศการ/เทศกาลนานาชาติ',       agencies:'CEA + สำนักงานศิลปวัฒนธรรมร่วมสมัย + กรมส่งเสริมวัฒนธรรม',          realBaht:361.8,  realPct:7.5  },
-  { id:'cea',      icon:'🏙️', name:'เศรษฐกิจสร้างสรรค์',             agencies:'CEA (สำนักนายกรัฐมนตรี)',                     realBaht:293.6,  realPct:6.1  },
-  { id:'game',     icon:'🎮', name:'เกม/แอนิเมชัน/ดิจิทัล',          agencies:'DEPA + กรมส่งเสริมวัฒนธรรม + DITP',          realBaht:199.3,  realPct:4.1  },
-  { id:'jewelry',  icon:'💎', name:'เครื่องประดับ',                   agencies:'สถาบันวิจัยและพัฒนาอัญมณีฯ (DITP)',           realBaht:190.4,  realPct:3.8  },
-  { id:'fashion',  icon:'👗', name:'แฟชัน',                           agencies:'DITP (กระทรวงพาณิชย์)',                       realBaht:158.1,  realPct:3.3  },
-  { id:'perform',  icon:'🎭', name:'ศิลปะการแสดง',                   agencies:'กรมส่งเสริมวัฒนธรรม + สำนักงานศิลปวัฒนธรรมร่วมสมัย',                realBaht:72.2,   realPct:1.5  },
-  { id:'book',     icon:'📚', name:'หนังสือ/วรรณกรรม',               agencies:'กรมส่งเสริมวัฒนธรรม + สำนักงานศิลปวัฒนธรรมร่วมสมัย',                realBaht:58.1,   realPct:1.2  },
-  { id:'design',   icon:'✏️', name:'ออกแบบ',                          agencies:'CEA + สำนักงานศิลปวัฒนธรรมร่วมสมัย + DITP',                          realBaht:47.4,   realPct:1.0  },
-  { id:'music',    icon:'🎵', name:'ดนตรี',                           agencies:'กรมส่งเสริมวัฒนธรรม + สำนักงานศิลปวัฒนธรรมร่วมสมัย',                realBaht:44.1,   realPct:0.9  },
-  { id:'welfare',  icon:'🛡️', name:'ทุนตรง/สวัสดิการศิลปินอิสระ',   agencies:'ไม่มีหน่วยงานรับผิดชอบ',                     realBaht:0,      realPct:0    },
+  { id:'heritage', icon:'fa-landmark',       name:'โบราณสถาน/มรดกวัฒนธรรม',       agencies:'กรมศิลปากร',                                   realBaht:2809.0, realPct:58.0 },
+  { id:'film',     icon:'fa-film',           name:'หนัง/ซีรีส์/แอนิเมชัน',          agencies:'กรมส่งเสริมวัฒนธรรม + หอภาพยนตร์',           realBaht:798.5,  realPct:16.5 },
+  { id:'intl',     icon:'fa-globe',          name:'นิทรรศการ/เทศกาลนานาชาติ',       agencies:'CEA + สวรส. + กรมส่งเสริมวัฒนธรรม',          realBaht:361.8,  realPct:7.5  },
+  { id:'cea',      icon:'fa-city',           name:'เศรษฐกิจสร้างสรรค์',             agencies:'CEA (สำนักนายกรัฐมนตรี)',                     realBaht:293.6,  realPct:6.1  },
+  { id:'game',     icon:'fa-gamepad',        name:'เกม/แอนิเมชัน/ดิจิทัล',          agencies:'DEPA + กรมส่งเสริมวัฒนธรรม + DITP',          realBaht:199.3,  realPct:4.1  },
+  { id:'jewelry',  icon:'fa-gem',            name:'เครื่องประดับ',                   agencies:'สถาบันวิจัยและพัฒนาอัญมณีฯ (DITP)',           realBaht:190.4,  realPct:3.8  },
+  { id:'fashion',  icon:'fa-shirt',          name:'แฟชัน',                           agencies:'DITP (กระทรวงพาณิชย์)',                       realBaht:158.1,  realPct:3.3  },
+  { id:'perform',  icon:'fa-masks-theater',  name:'ศิลปะการแสดง',                   agencies:'กรมส่งเสริมวัฒนธรรม + สวรส.',                realBaht:72.2,   realPct:1.5  },
+  { id:'book',     icon:'fa-book',           name:'หนังสือ/วรรณกรรม',               agencies:'กรมส่งเสริมวัฒนธรรม + สวรส.',                realBaht:58.1,   realPct:1.2  },
+  { id:'design',   icon:'fa-pen-ruler',      name:'ออกแบบ',                          agencies:'CEA + สวรส. + DITP',                          realBaht:47.4,   realPct:1.0  },
+  { id:'music',    icon:'fa-music',          name:'ดนตรี',                           agencies:'กรมส่งเสริมวัฒนธรรม + สวรส.',                realBaht:44.1,   realPct:0.9  },
+  { id:'welfare',  icon:'fa-shield-heart',   name:'ทุนตรง/สวัสดิการศิลปินอิสระ',   agencies:'ไม่มีหน่วยงานรับผิดชอบ',                     realBaht:0,      realPct:0    },
 ];
 
 function genId() { return 'sess-' + Math.random().toString(36).slice(2, 11); }
@@ -330,8 +355,10 @@ function ProjectSheet({ project, value, remaining, onSave, onClose }) {
     <div className="sheet-overlay" onClick={onClose}>
       <div className="sheet" onClick={(e) => e.stopPropagation()}>
         <div className="sheet-handle" />
-        <div className="sheet-icon">{project.icon}</div>
-        <div className="sheet-name">{project.name}</div>
+        <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:18}}>
+          <i className={`fa-solid ${project.icon} sheet-icon`}></i>
+          <div className="sheet-name" style={{margin:0}}>{project.name}</div>
+        </div>
         <div className="sheet-val-row">
           <input
             type="number" inputMode="numeric"
@@ -404,7 +431,7 @@ function IntroPage({ onStart }) {
       </p>
 
       <h1 className="big-title">
-        ลองเป็น<br /> <em>รมต.</em><br />กระทรวง<br />วัฒนธรรม
+        ลอง<br />เป็น <em>รมต.</em><br />กระทรวง<br />วัฒนธรรม
       </h1>
       <div className="rule"></div>
       <p className="intro-desc">
@@ -467,15 +494,12 @@ function PlayPage({ alloc, onChange, onSubmit, sending }) {
           onSave={handleSave}
           onClose={() => setOpenId(null)} />}
 
-      {/* Top header — shows what you've ALLOCATED (your interests) */}
+      {/* Top header — REMAINING hero number */}
       <div className="ph">
-        <div className="ph-label">งบที่จัดสรรแล้ว</div>
-        <div className="ph-row">
-          <span className={`ph-num ${isOver ? 'ph-over' : 'ph-ok'}`}>{total}</span>
-          <span className="ph-unit">ล้านบาท</span>
-        </div>
-        <div className="ph-bar">
-          <div className="ph-fill" style={{ width:`${pct}%`, background: isOver ? 'var(--red)' : 'var(--or)' }} />
+        <div className="ph-remaining-lbl">งบคงเหลือ</div>
+        <div style={{ display:'flex', alignItems:'baseline' }}>
+          <span className={`ph-remaining-num ${isOver ? 'is-over' : remaining === 0 ? 'is-zero' : ''}`}>{remaining}</span>
+          <span className="ph-remaining-unit">ล้านบาท</span>
         </div>
       </div>
 
@@ -489,24 +513,26 @@ function PlayPage({ alloc, onChange, onSubmit, sending }) {
               onClick={() => setOpenId(p.id)}
               aria-label={p.name}>
               {v > 0 && <span className="sq-alloc">{v}M</span>}
-              <span className="sq-icon">{p.icon}</span>
+              <i className={`fa-solid ${p.icon} sq-icon`}></i>
               <span className="sq-name">{p.name}</span>
             </button>);
         })}
       </div>
 
-      {/* Bottom bar — REMAINING clearly at bottom */}
+      {/* Bottom bar — progress + allocated + submit */}
       <div className="sbar">
-        <div className="sbar-remaining">
-          <span className="sbar-remaining-lbl">งบคงเหลือ</span>
-          <span className={`sbar-remaining-num ${remClass}`}>{remaining}</span>
-          <span className="sbar-remaining-unit">ล้านบาท</span>
+        <div className="sbar-progress-row">
+          <span style={{ fontSize:11, color:'var(--tx3)', whiteSpace:'nowrap' }}>จัดสรรแล้ว</span>
+          <div className="sbar-bar-wrap">
+            <div className="sbar-bar-fill" style={{ width:`${pct}%`, background: isOver ? 'var(--red)' : 'var(--or)' }} />
+          </div>
+          <span className="sbar-num" style={{ color: isOver ? 'var(--red)' : total > 0 ? 'var(--or)' : 'var(--tx3)' }}>{total}/100M</span>
         </div>
         <button
           className="btn btn-or"
-          disabled={total === 0 || sending}
+          disabled={total !== MAX || sending}
           onClick={() => onSubmit()}>
-          {sending ? 'กำลังส่ง...' : 'ส่งคำตอบ →'}
+          {sending ? 'กำลังส่ง...' : total < MAX ? `ยังเหลือ ${remaining}M` : 'ส่งคำตอบ →'}
         </button>
       </div>
     </div>);
@@ -535,29 +561,29 @@ function ResultsPage({ alloc, onReset }) {
     /* Per-project data from budget_2569.md — analytical tone with personality */
     const insightData = {
       heritage: { agencies:'กรมศิลปากร',
-        note:<>🏛️ <strong>58%</strong> ของงบทั้งหมด — ขณะที่ดนตรี เกม ออกแบบ แฟชันรวมกันได้แค่ <strong>9.3%</strong> 😤</> },
+        note:<><i className="fa-solid fa-landmark" style={{marginRight:6,color:'var(--or)'}}></i><strong>58%</strong> ของงบทั้งหมด — ขณะที่ดนตรี เกม ออกแบบ แฟชันรวมกันได้แค่ <strong>9.3%</strong> <i className="fa-solid fa-face-angry" style={{marginLeft:4}}></i></> },
       film:     { agencies:'กรมส่งเสริมวัฒนธรรม + หอภาพยนตร์',
-        note:<>🎬 งบส่วนใหญ่เป็นงบเทศกาลและอบรมผู้ผลิต — ทุนตรงสร้างหนังมีแค่ <strong>104 ล้าน</strong> จาก 798.5 ล้าน 😬 ช่องว่างระหว่างงบ "ส่งเสริมอุตสาหกรรม" กับเงินที่ถึงมือคนทำหนังจริงๆ ค่อนข้างใหญ่</> },
-      intl:     { agencies:'CEA + สำนักงานศิลปวัฒนธรรมร่วมสมัย + กรมส่งเสริมวัฒนธรรม',
-        note:<>🌐 กระจายผ่าน 3 หน่วยงาน รวม Soft Power Forum <strong>77 ล้าน</strong> และมหกรรมศิลปะร่วมสมัย <strong>97 ล้าน</strong></> },
+        note:<><i className="fa-solid fa-film" style={{marginRight:6,color:'var(--or)'}}></i>งบส่วนใหญ่เป็นงบเทศกาลและอบรมผู้ผลิต — ทุนตรงสร้างหนังมีแค่ <strong>104 ล้าน</strong> จาก 798.5 ล้าน <i className="fa-solid fa-face-grimace" style={{marginLeft:4}}></i> ช่องว่างระหว่างงบ "ส่งเสริมอุตสาหกรรม" กับเงินที่ถึงมือคนทำหนังจริงๆ ค่อนข้างใหญ่</> },
+      intl:     { agencies:'CEA + สวรส. + กรมส่งเสริมวัฒนธรรม',
+        note:<><i className="fa-solid fa-globe" style={{marginRight:6,color:'var(--or)'}}></i>กระจายผ่าน 3 หน่วยงาน รวม Soft Power Forum <strong>77 ล้าน</strong> และมหกรรมศิลปะร่วมสมัย <strong>97 ล้าน</strong></> },
       cea:      { agencies:'CEA (สำนักนายกรัฐมนตรี)',
-        note:<>🏙️ เน้น Creative District และพัฒนา SME — ทิศทางสนับสนุนระบบนิเวศ แต่ยังไม่มีทุนตรงให้ศิลปินอิสระ 😕</> },
+        note:<><i className="fa-solid fa-city" style={{marginRight:6,color:'var(--or)'}}></i>เน้น Creative District และพัฒนา SME — ทิศทางสนับสนุนระบบนิเวศ แต่ยังไม่มีทุนตรงให้ศิลปินอิสระ <i className="fa-solid fa-face-frown" style={{marginLeft:4}}></i></> },
       game:     { agencies:'DEPA + กรมส่งเสริมวัฒนธรรม + DITP',
-        note:<>🎮 งบ 199 ล้านมาจาก 3 หน่วยงาน แต่ <strong>DEPA (กระทรวงดิจิทัล)</strong> เป็นผู้ลงทุนหลักคนเดียว <strong>138.5 ล้าน</strong> — หน่วยงานวัฒนธรรมโดยตรงรวมกันได้แค่ 60 ล้าน 🤨</> },
+        note:<><i className="fa-solid fa-gamepad" style={{marginRight:6,color:'var(--or)'}}></i>งบ 199 ล้านมาจาก 3 หน่วยงาน แต่ <strong>DEPA (กระทรวงดิจิทัล)</strong> เป็นผู้ลงทุนหลักคนเดียว <strong>138.5 ล้าน</strong> — หน่วยงานวัฒนธรรมโดยตรงรวมกันได้แค่ 60 ล้าน <i className="fa-solid fa-face-frown-open" style={{marginLeft:4}}></i></> },
       jewelry:  { agencies:'สถาบันวิจัยและพัฒนาอัญมณีฯ (DITP)',
-        note:<>💎 ตัวเลข 190 ล้านดูใหญ่ แต่ Soft Power/creative จริงๆ แค่ <strong>8.6 ล้าน</strong> ที่เหลือเป็น R&amp;D มาตรฐานและส่งออก 😅</> },
+        note:<><i className="fa-solid fa-gem" style={{marginRight:6,color:'var(--or)'}}></i>ตัวเลข 190 ล้านดูใหญ่ แต่ Soft Power/creative จริงๆ แค่ <strong>8.6 ล้าน</strong> ที่เหลือเป็น R&amp;D มาตรฐานและส่งออก <i className="fa-solid fa-face-meh" style={{marginLeft:4}}></i></> },
       fashion:  { agencies:'DITP (กระทรวงพาณิชย์)',
-        note:<>👗 งบ 158 ล้านแบ่งเป็น 2 ประเภท — <strong>งบส่งเสริมการส่งออก</strong> 140 ล้าน vs <strong>งบส่งเสริมการออกแบบ Soft Power</strong> 17.8 ล้าน ส่วนที่สนับสนุนดีไซเนอร์จริงๆ แค่ 11% เท่านั้น 😮‍💨</> },
-      perform:  { agencies:'กรมส่งเสริมวัฒนธรรม + สำนักงานศิลปวัฒนธรรมร่วมสมัย',
-        note:<>🎭 ส่วนใหญ่เป็นงาน ASEAN/นานาชาติ — งบพัฒนาพื้นที่แสดงในประเทศมีแค่ <strong>16 ล้าน</strong> 😶</> },
-      book:     { agencies:'กรมส่งเสริมวัฒนธรรม + สำนักงานศิลปวัฒนธรรมร่วมสมัย',
-        note:<>📚 รวม BL&amp;GL Rights Fair, Writers' Village และงาน Book Fair — งบเน้นการจัดงานและส่งออกลิขสิทธิ์ มากกว่าทุนสนับสนุนนักเขียนอิสระโดยตรง 📝</> },
-      design:   { agencies:'CEA + สำนักงานศิลปวัฒนธรรมร่วมสมัย + DITP',
-        note:<>✏️ DITP ให้ <strong>22.5 ล้าน</strong> เน้น Soft Power ส่งออก — งบ "ส่งเสริมการค้าผ่านการออกแบบ" มีสัดส่วนมากกว่างบ "พัฒนาดีไซเนอร์ในประเทศ"</> },
-      music:    { agencies:'กรมส่งเสริมวัฒนธรรม + สำนักงานศิลปวัฒนธรรมร่วมสมัย',
-        note:<>🎵 เกือบทั้งหมด (<strong>42.9 ล้าน</strong>) เป็น Thailand Music Awards งานเดียว 🎤 น้อยกว่างบเกมถึง <strong>4×</strong> และไม่มีทุนตรงให้นักดนตรีอิสระ</> },
+        note:<><i className="fa-solid fa-shirt" style={{marginRight:6,color:'var(--or)'}}></i>งบ 158 ล้านแบ่งเป็น 2 ประเภท — <strong>งบส่งเสริมการส่งออก</strong> 140 ล้าน vs <strong>งบส่งเสริมการออกแบบ Soft Power</strong> 17.8 ล้าน ส่วนที่สนับสนุนดีไซเนอร์จริงๆ แค่ 11% เท่านั้น <i className="fa-solid fa-face-tired" style={{marginLeft:4}}></i></> },
+      perform:  { agencies:'กรมส่งเสริมวัฒนธรรม + สวรส.',
+        note:<><i className="fa-solid fa-masks-theater" style={{marginRight:6,color:'var(--or)'}}></i>ส่วนใหญ่เป็นงาน ASEAN/นานาชาติ — งบพัฒนาพื้นที่แสดงในประเทศมีแค่ <strong>16 ล้าน</strong> <i className="fa-solid fa-face-meh-blank" style={{marginLeft:4}}></i></> },
+      book:     { agencies:'กรมส่งเสริมวัฒนธรรม + สวรส.',
+        note:<><i className="fa-solid fa-book" style={{marginRight:6,color:'var(--or)'}}></i>รวม BL&amp;GL Rights Fair, Writers' Village และงาน Book Fair — งบเน้นการจัดงานและส่งออกลิขสิทธิ์ มากกว่าทุนสนับสนุนนักเขียนอิสระโดยตรง <i className="fa-solid fa-pen-to-square" style={{marginLeft:4}}></i></> },
+      design:   { agencies:'CEA + สวรส. + DITP',
+        note:<><i className="fa-solid fa-pen-ruler" style={{marginRight:6,color:'var(--or)'}}></i>DITP ให้ <strong>22.5 ล้าน</strong> เน้น Soft Power ส่งออก — งบ "ส่งเสริมการค้าผ่านการออกแบบ" มีสัดส่วนมากกว่างบ "พัฒนาดีไซเนอร์ในประเทศ"</> },
+      music:    { agencies:'กรมส่งเสริมวัฒนธรรม + สวรส.',
+        note:<><i className="fa-solid fa-music" style={{marginRight:6,color:'var(--or)'}}></i>เกือบทั้งหมด (<strong>42.9 ล้าน</strong>) เป็น Thailand Music Awards งานเดียว <i className="fa-solid fa-microphone" style={{margin:'0 3px'}}></i> น้อยกว่างบเกมถึง <strong>4×</strong> และไม่มีทุนตรงให้นักดนตรีอิสระ</> },
       welfare:  { agencies:'ไม่มีหน่วยงานรับผิดชอบ',
-        note:<>🛡️ 0 บาท. จาก 4 กระทรวง. ไม่มีแม้แต่บรรทัดเดียวในงบสำหรับศิลปินอิสระ 😔</> },
+        note:<><i className="fa-solid fa-shield-heart" style={{marginRight:6,color:'var(--or)'}}></i>0 บาท. จาก 4 กระทรวง. ไม่มีแม้แต่บรรทัดเดียวในงบสำหรับศิลปินอิสระ <i className="fa-solid fa-face-sad-tear" style={{marginLeft:4}}></i></> },
     };
 
     const wNote = welfareA > 0 && top.id !== 'welfare'
@@ -608,13 +634,13 @@ function ResultsPage({ alloc, onReset }) {
           ? <div className="ri" style={{ flexDirection:'column', alignItems:'flex-start', gap:6 }}>
               <span className="ri-n" style={{ fontSize:12 }}>เลือกทุกโครงการ — อย่างละ {equalVal}M เท่ากัน</span>
               <div style={{ display:'flex', flexWrap:'wrap', gap:6 }}>
-                {nonZero.map((p) => <span key={p.id} style={{ fontSize:12, color:'var(--tx2)' }}>{p.icon} {p.name}</span>)}
+                {nonZero.map((p) => <span key={p.id} style={{ fontSize:12, color:'var(--tx2)', display:'inline-flex', alignItems:'center', gap:4 }}><i className={`fa-solid ${p.icon}`}></i>{p.name}</span>)}
               </div>
             </div>
           : nonZero.slice(0, 5).map((p, i) =>
               <div key={p.id} className="ri">
                 <span className="ri-n">#{i + 1}</span>
-                <span className="ri-ic">{p.icon}</span>
+                <i className={`fa-solid ${p.icon} ri-ic`}></i>
                 <span className="ri-nm">{p.name}</span>
                 <span className={`ri-vl ${p.a > 0 ? 'vl-on' : 'vl-off'}`}>{p.a}%</span>
               </div>)
@@ -627,33 +653,61 @@ function ResultsPage({ alloc, onReset }) {
         <div className="insight-txt">{insightPara}</div>
       </div>
 
-      {/* % comparison table */}
+      {/* Bar chart comparison */}
       <div className="sec-lbl">เปรียบกับงบรัฐ 2569</div>
-      <div style={{ fontSize:10, color:'var(--tx3)', marginBottom:8 }}>แสดงเป็น % · แตะแถวเพื่อดูตัวเลขจริงและหน่วยงาน</div>
-      <div className="cmp-table">
-        <div className="cmp-head">
-          <span>โครงการ</span>
-          <span style={{ textAlign:'right' }}>คุณ</span>
-          <span style={{ textAlign:'right' }}>รัฐ</span>
-        </div>
-        {sorted.map((p) => {
-          const isOpen = expandedRow === p.id;
-          return (
-            <React.Fragment key={p.id}>
-              <div
-                className="cmp-row"
-                onClick={() => setExpandedRow(isOpen ? null : p.id)}>
-                <span className="cmp-proj">{p.icon} {p.name}</span>
-                <span className={`cmp-you ${p.a > 0 ? 'cmp-you--on' : 'cmp-you--off'}`}>{p.a}%</span>
-                <span className="cmp-govt">{p.realPct}%</span>
-              </div>
-              {isOpen &&
-                <div className="cmp-expand">
-                  <div><strong style={{ color:'var(--tx)' }}>งบจริง: </strong>{p.realBaht.toLocaleString()} ล้านบาท</div>
-                  <div><strong style={{ color:'var(--tx)' }}>หน่วยงาน: </strong>{p.agencies}</div>
-                </div>}
-            </React.Fragment>);
-        })}
+      <div style={{ display:'flex', gap:14, marginBottom:10, alignItems:'center' }}>
+        <span style={{ display:'flex', alignItems:'center', gap:5, fontSize:10, color:'var(--tx2)' }}>
+          <span style={{ width:10, height:7, borderRadius:2, background:'var(--or)', display:'inline-block' }}></span>คุณ
+        </span>
+        <span style={{ display:'flex', alignItems:'center', gap:5, fontSize:10, color:'var(--tx2)' }}>
+          <span style={{ width:10, height:7, borderRadius:2, background:'var(--blue)', display:'inline-block' }}></span>รัฐ
+        </span>
+        <span style={{ fontSize:10, color:'var(--tx3)', marginLeft:'auto' }}>แตะเพื่อดูรายละเอียด</span>
+      </div>
+      <div style={{ marginBottom:22 }}>
+        {(() => {
+          const maxPct = Math.max(...sorted.map(p => Math.max(p.a, p.realPct)), 1);
+          return sorted.map((p) => {
+            const isOpen = expandedRow === p.id;
+            const uW = (p.a / maxPct * 100).toFixed(1);
+            const gW = (p.realPct / maxPct * 100).toFixed(1);
+            const hasAlloc = p.a > 0;
+            return (
+              <div key={p.id} className="bc-row">
+                <div className="bc-head">
+                  <i className={`fa-solid ${p.icon} bc-icon ${hasAlloc ? 'bc-icon--on' : 'bc-icon--off'}`}></i>
+                  <span className="bc-name" style={{ color: hasAlloc ? 'var(--tx)' : 'var(--tx3)' }}>{p.name}</span>
+                  <button
+                    className="bc-info-btn"
+                    onClick={() => setExpandedRow(isOpen ? null : p.id)}
+                    aria-label={`ข้อมูล ${p.name}`}>
+                    i
+                  </button>
+                </div>
+                <div className="bc-cols">
+                  <div className="bc-side">
+                    <span className="bc-side-lbl bc-side-lbl-or">คุณ</span>
+                    <div className="bc-bar-row">
+                      <div className="bc-track"><div className="bc-fill bc-fill-or" style={{ width:`${uW}%` }} /></div>
+                      <span className="bc-pct" style={{ color: hasAlloc ? 'var(--or)' : 'var(--tx3)' }}>{p.a}%</span>
+                    </div>
+                  </div>
+                  <div className="bc-side">
+                    <span className="bc-side-lbl bc-side-lbl-bl">รัฐ</span>
+                    <div className="bc-bar-row">
+                      <div className="bc-track"><div className="bc-fill bc-fill-bl" style={{ width:`${gW}%` }} /></div>
+                      <span className="bc-pct bc-pct-bl">{p.realPct}%</span>
+                    </div>
+                  </div>
+                </div>
+                {isOpen &&
+                  <div className="bc-detail">
+                    <div><strong style={{ color:'var(--tx)' }}>งบจริง: </strong>{p.realBaht.toLocaleString()} ล้านบาท</div>
+                    <div><strong style={{ color:'var(--tx)' }}>หน่วยงาน: </strong>{p.agencies}</div>
+                  </div>}
+              </div>);
+          });
+        })()}
       </div>
 
       <button className="btn btn-ghost" style={{ marginBottom:16 }} onClick={onReset}>เล่นอีกครั้ง</button>
@@ -699,6 +753,7 @@ function App() {
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+
 </script>
 </body>
 </html>
