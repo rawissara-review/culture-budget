@@ -219,11 +219,78 @@
 
     /* ── SENDING OVERLAY ── */
     .overlay {
-      position:fixed; inset:0; background:rgba(11,10,8,.92);
+      position:fixed; inset:0; background:var(--bg);
       display:flex; flex-direction:column; align-items:center; justify-content:center;
-      gap:16px; z-index:80;
+      gap:28px; z-index:80;
     }
-    .spinner { width:36px; height:36px; border:2px solid var(--s2); border-top-color:var(--or); border-radius:50%; animation:spin .8s linear infinite; }
+    .meeting-scene { position:relative; width:220px; height:140px; }
+    /* table */
+    .mtable {
+      position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+      width:110px; height:54px; background:var(--s2); border:1.5px solid var(--s3);
+      border-radius:28px;
+    }
+    /* person blob */
+    .mp {
+      position:absolute; display:flex; flex-direction:column; align-items:center; gap:3px;
+    }
+    .mp-head {
+      width:16px; height:16px; border-radius:50%;
+      background:var(--s2); border:1.5px solid var(--bd);
+    }
+    .mp-body {
+      width:22px; height:13px; border-radius:8px 8px 0 0;
+      background:var(--s2); border:1.5px solid var(--bd); border-bottom:none;
+    }
+    /* speaking bubble */
+    .mp-bubble {
+      position:absolute; top:-10px; right:-6px;
+      background:var(--or); border-radius:6px;
+      width:8px; height:5px;
+      transform-origin:bottom left;
+    }
+    .mp-bubble::after {
+      content:''; position:absolute; bottom:-3px; left:2px;
+      border:3px solid transparent; border-top-color:var(--or);
+    }
+    /* dot typing in bubble */
+    .mp-dots {
+      position:absolute; top:-18px; right:-14px;
+      background:var(--s3); border:1px solid var(--bd); border-radius:8px;
+      padding:3px 5px; display:flex; gap:3px; align-items:center;
+    }
+    .mp-dot {
+      width:4px; height:4px; border-radius:50%; background:var(--tx3);
+      animation:dotBob .9s ease-in-out infinite;
+    }
+    .mp-dot:nth-child(2) { animation-delay:.15s; }
+    .mp-dot:nth-child(3) { animation-delay:.3s; }
+    @keyframes dotBob {
+      0%,80%,100%{transform:translateY(0);opacity:.4;}
+      40%{transform:translateY(-3px);opacity:1;}
+    }
+    /* gavel */
+    .mgavel {
+      position:absolute; bottom:10px; right:18px;
+      font-size:18px; transform-origin:bottom right;
+      animation:gavelSwing 1.4s ease-in-out infinite;
+    }
+    @keyframes gavelSwing {
+      0%,100%{transform:rotate(-20deg);}
+      50%{transform:rotate(20deg);}
+    }
+    /* paper shuffle */
+    .mpaper {
+      position:absolute; top:10px; left:16px;
+      animation:paperFloat 2s ease-in-out infinite;
+    }
+    @keyframes paperFloat {
+      0%,100%{transform:translateY(0) rotate(-4deg);}
+      50%{transform:translateY(-5px) rotate(4deg);}
+    }
+    .overlay-text { text-align:center; }
+    .overlay-title { font-size:17px; font-weight:700; color:var(--tx); margin-bottom:5px; }
+    .overlay-sub { font-size:12px; color:var(--tx3); }
     @keyframes spin { to{transform:rotate(360deg);} }
 
     /* ── RESULTS ── */
@@ -323,15 +390,15 @@ const MAX = 100;
 const PROJECTS = [
   { id:'heritage', icon:'fa-landmark',       name:'โบราณสถาน/มรดกวัฒนธรรม',       agencies:'กรมศิลปากร',                                   realBaht:2809.0, realPct:58.0 },
   { id:'film',     icon:'fa-film',           name:'หนัง/ซีรีส์/แอนิเมชัน',          agencies:'กรมส่งเสริมวัฒนธรรม + หอภาพยนตร์',           realBaht:798.5,  realPct:16.5 },
-  { id:'intl',     icon:'fa-globe',          name:'นิทรรศการ/เทศกาลนานาชาติ',       agencies:'CEA + สำนักงานศิลปวัฒนธรรมร่วมสมัย + กรมส่งเสริมวัฒนธรรม',          realBaht:361.8,  realPct:7.5  },
+  { id:'intl',     icon:'fa-globe',          name:'นิทรรศการ/เทศกาลนานาชาติ',       agencies:'CEA + สวรส. + กรมส่งเสริมวัฒนธรรม',          realBaht:361.8,  realPct:7.5  },
   { id:'cea',      icon:'fa-city',           name:'เศรษฐกิจสร้างสรรค์',             agencies:'CEA (สำนักนายกรัฐมนตรี)',                     realBaht:293.6,  realPct:6.1  },
   { id:'game',     icon:'fa-gamepad',        name:'เกม/แอนิเมชัน/ดิจิทัล',          agencies:'DEPA + กรมส่งเสริมวัฒนธรรม + DITP',          realBaht:199.3,  realPct:4.1  },
   { id:'jewelry',  icon:'fa-gem',            name:'เครื่องประดับ',                   agencies:'สถาบันวิจัยและพัฒนาอัญมณีฯ (DITP)',           realBaht:190.4,  realPct:3.8  },
   { id:'fashion',  icon:'fa-shirt',          name:'แฟชัน',                           agencies:'DITP (กระทรวงพาณิชย์)',                       realBaht:158.1,  realPct:3.3  },
-  { id:'perform',  icon:'fa-masks-theater',  name:'ศิลปะการแสดง',                   agencies:'กรมส่งเสริมวัฒนธรรม + สำนักงานศิลปวัฒนธรรมร่วมสมัย',                realBaht:72.2,   realPct:1.5  },
-  { id:'book',     icon:'fa-book',           name:'หนังสือ/วรรณกรรม',               agencies:'กรมส่งเสริมวัฒนธรรม + สำนักงานศิลปวัฒนธรรมร่วมสมัย',                realBaht:58.1,   realPct:1.2  },
-  { id:'design',   icon:'fa-pen-ruler',      name:'ออกแบบ',                          agencies:'CEA + สำนักงานศิลปวัฒนธรรมร่วมสมัย + DITP',                          realBaht:47.4,   realPct:1.0  },
-  { id:'music',    icon:'fa-music',          name:'ดนตรี',                           agencies:'กรมส่งเสริมวัฒนธรรม + สำนักงานศิลปวัฒนธรรมร่วมสมัย',                realBaht:44.1,   realPct:0.9  },
+  { id:'perform',  icon:'fa-masks-theater',  name:'ศิลปะการแสดง',                   agencies:'กรมส่งเสริมวัฒนธรรม + สวรส.',                realBaht:72.2,   realPct:1.5  },
+  { id:'book',     icon:'fa-book',           name:'หนังสือ/วรรณกรรม',               agencies:'กรมส่งเสริมวัฒนธรรม + สวรส.',                realBaht:58.1,   realPct:1.2  },
+  { id:'design',   icon:'fa-pen-ruler',      name:'ออกแบบ',                          agencies:'CEA + สวรส. + DITP',                          realBaht:47.4,   realPct:1.0  },
+  { id:'music',    icon:'fa-music',          name:'ดนตรี',                           agencies:'กรมส่งเสริมวัฒนธรรม + สวรส.',                realBaht:44.1,   realPct:0.9  },
   { id:'welfare',  icon:'fa-shield-heart',   name:'ทุนตรง/สวัสดิการศิลปินอิสระ',   agencies:'ไม่มีหน่วยงานรับผิดชอบ',                     realBaht:0,      realPct:0    },
 ];
 
@@ -431,7 +498,7 @@ function IntroPage({ onStart }) {
       </p>
 
       <h1 className="big-title">
-        ลองเป็น<br /><em>รมต.</em><br />กระทรวง<br />วัฒนธรรม
+        ลอง<br />เป็น <em>รมต.</em><br />กระทรวง<br />วัฒนธรรม
       </h1>
       <div className="rule"></div>
       <p className="intro-desc">
@@ -479,8 +546,61 @@ function PlayPage({ alloc, onChange, onSubmit, sending }) {
     <div className="pop">
       {sending &&
         <div className="overlay">
-          <div className="spinner"></div>
-          <span style={{ color:'var(--tx2)', fontSize:13 }}>กำลังประชุมคณะกรรมการงบประมาณ...จะสรุปผลให้เร็วๆนี้!</span>
+          {/* Meeting scene animation */}
+          <div className="meeting-scene">
+            {/* Table */}
+            <div className="mtable"></div>
+
+            {/* Person top-left */}
+            <div className="mp" style={{ top:8, left:28 }}>
+              <div className="mp-head" style={{ background:'#2A2925', borderColor:'var(--bdo)' }}></div>
+              <div className="mp-body" style={{ background:'#2A2925', borderColor:'var(--bdo)' }}></div>
+              <div className="mp-dots">
+                <div className="mp-dot"></div><div className="mp-dot"></div><div className="mp-dot"></div>
+              </div>
+            </div>
+
+            {/* Person top-center */}
+            <div className="mp" style={{ top:2, left:'50%', transform:'translateX(-50%)' }}>
+              <div className="mp-head" style={{ background:'var(--or)', borderColor:'var(--or)', width:18, height:18 }}></div>
+              <div className="mp-body" style={{ background:'rgba(255,106,20,0.25)', borderColor:'var(--bdo)', width:26 }}></div>
+              {/* speaking */}
+              <div className="mp-bubble"></div>
+            </div>
+
+            {/* Person top-right */}
+            <div className="mp" style={{ top:8, right:28 }}>
+              <div className="mp-head" style={{ background:'#2A2925', borderColor:'var(--bdo)' }}></div>
+              <div className="mp-body" style={{ background:'#2A2925', borderColor:'var(--bdo)' }}></div>
+              <div className="mp-dots" style={{ left:'-14px', right:'auto' }}>
+                <div className="mp-dot" style={{ animationDelay:'.2s' }}></div>
+                <div className="mp-dot" style={{ animationDelay:'.35s' }}></div>
+                <div className="mp-dot" style={{ animationDelay:'.5s' }}></div>
+              </div>
+            </div>
+
+            {/* Person bottom-left */}
+            <div className="mp" style={{ bottom:8, left:20, flexDirection:'column-reverse' }}>
+              <div className="mp-head" style={{ background:'#2A2925', borderColor:'var(--bd)' }}></div>
+              <div className="mp-body" style={{ background:'#2A2925', borderColor:'var(--bd)', borderRadius:'0 0 8px 8px', borderTop:'none', borderBottom:'1.5px solid var(--bd)' }}></div>
+            </div>
+
+            {/* Person bottom-right */}
+            <div className="mp" style={{ bottom:8, right:20, flexDirection:'column-reverse' }}>
+              <div className="mp-head" style={{ background:'#2A2925', borderColor:'var(--bd)' }}></div>
+              <div className="mp-body" style={{ background:'#2A2925', borderColor:'var(--bd)', borderRadius:'0 0 8px 8px', borderTop:'none', borderBottom:'1.5px solid var(--bd)' }}></div>
+            </div>
+
+            {/* Gavel */}
+            <div className="mgavel">🔨</div>
+            {/* Paper */}
+            <div className="mpaper" style={{ fontSize:14 }}>📋</div>
+          </div>
+
+          <div className="overlay-text">
+            <div className="overlay-title">กำลังประชุมคณะกรรมการงบประมาณ</div>
+            <div className="overlay-sub">จะสรุปผลให้เร็วๆ นี้</div>
+          </div>
         </div>}
       {showBudgetFull &&
         <BudgetFullModal
@@ -561,33 +681,33 @@ function ResultsPage({ alloc, onReset }) {
     /* Per-project data from budget_2569.md — analytical tone with personality */
     const insightData = {
       heritage: { agencies:'กรมศิลปากร',
-        note:<><strong>58%</strong> ของงบทั้งหมด — ขณะที่ดนตรี เกม ออกแบบ แฟชันรวมกันได้แค่ <strong>9.3%</strong> <i className="fa-solid fa-face-angry" style={{marginLeft:4}}></i></> },
+        note:<><i className="fa-solid fa-landmark" style={{marginRight:6,color:'var(--or)'}}></i><strong>58%</strong> ของงบทั้งหมด — ขณะที่ดนตรี เกม ออกแบบ แฟชันรวมกันได้แค่ <strong>9.3%</strong> <i className="fa-solid fa-face-angry" style={{marginLeft:4}}></i></> },
       film:     { agencies:'กรมส่งเสริมวัฒนธรรม + หอภาพยนตร์',
-        note:<>งบส่วนใหญ่เป็นงบเทศกาลและอบรมผู้ผลิต — ทุนตรงสร้างหนังมีแค่ <strong>104 ล้าน</strong> จาก 798.5 ล้าน <i className="fa-solid fa-face-grimace" style={{marginLeft:4}}></i> ช่องว่างระหว่างงบ "ส่งเสริมอุตสาหกรรม" กับเงินที่ถึงมือคนทำหนังจริงๆ ค่อนข้างใหญ่</> },
-      intl:     { agencies:'CEA + สำนักงานศิลปวัฒนธรรมร่วมสมัย + กรมส่งเสริมวัฒนธรรม',
-        note:<>โครงการนิทรรศการ/เทศกาลนานาชาติ กระจายผ่าน 3 หน่วยงาน รวม Soft Power Forum <strong>77 ล้าน</strong> และมหกรรมศิลปะร่วมสมัย <strong>97 ล้าน</strong></> },
+        note:<><i className="fa-solid fa-film" style={{marginRight:6,color:'var(--or)'}}></i>งบส่วนใหญ่เป็นงบเทศกาลและอบรมผู้ผลิต — ทุนตรงสร้างหนังมีแค่ <strong>104 ล้าน</strong> จาก 798.5 ล้าน <i className="fa-solid fa-face-grimace" style={{marginLeft:4}}></i> ช่องว่างระหว่างงบ "ส่งเสริมอุตสาหกรรม" กับเงินที่ถึงมือคนทำหนังจริงๆ ค่อนข้างใหญ่</> },
+      intl:     { agencies:'CEA + สวรส. + กรมส่งเสริมวัฒนธรรม',
+        note:<><i className="fa-solid fa-globe" style={{marginRight:6,color:'var(--or)'}}></i>กระจายผ่าน 3 หน่วยงาน รวม Soft Power Forum <strong>77 ล้าน</strong> และมหกรรมศิลปะร่วมสมัย <strong>97 ล้าน</strong></> },
       cea:      { agencies:'CEA (สำนักนายกรัฐมนตรี)',
-        note:<>ส่วนใหญ่เน้น Creative District และพัฒนา SME — ทิศทางสนับสนุนระบบนิเวศ แต่ยังไม่มีทุนตรงให้ศิลปินอิสระ <i className="fa-solid fa-face-frown" style={{marginLeft:4}}></i></> },
+        note:<><i className="fa-solid fa-city" style={{marginRight:6,color:'var(--or)'}}></i>เน้น Creative District และพัฒนา SME — ทิศทางสนับสนุนระบบนิเวศ แต่ยังไม่มีทุนตรงให้ศิลปินอิสระ <i className="fa-solid fa-face-frown" style={{marginLeft:4}}></i></> },
       game:     { agencies:'DEPA + กรมส่งเสริมวัฒนธรรม + DITP',
-        note:<>งบ 199 ล้านมาจาก 3 หน่วยงาน แต่ <strong>DEPA (กระทรวงดิจิทัล)</strong> เป็นผู้ลงทุนหลักคนเดียว <strong>138.5 ล้าน</strong> — หน่วยงานวัฒนธรรมโดยตรงรวมกันได้แค่ 60 ล้าน <i className="fa-solid fa-face-frown-open" style={{marginLeft:4}}></i></> },
+        note:<><i className="fa-solid fa-gamepad" style={{marginRight:6,color:'var(--or)'}}></i>งบ 199 ล้านมาจาก 3 หน่วยงาน แต่ <strong>DEPA (กระทรวงดิจิทัล)</strong> เป็นผู้ลงทุนหลักคนเดียว <strong>138.5 ล้าน</strong> — หน่วยงานวัฒนธรรมโดยตรงรวมกันได้แค่ 60 ล้าน <i className="fa-solid fa-face-frown-open" style={{marginLeft:4}}></i></> },
       jewelry:  { agencies:'สถาบันวิจัยและพัฒนาอัญมณีฯ (DITP)',
-        note:<>ตัวเลข 190 ล้านดูใหญ่ แต่ Soft Power/creative จริงๆ แค่ <strong>8.6 ล้าน</strong> ที่เหลือเป็น R&amp;D มาตรฐานและส่งออก <i className="fa-solid fa-face-meh" style={{marginLeft:4}}></i></> },
+        note:<><i className="fa-solid fa-gem" style={{marginRight:6,color:'var(--or)'}}></i>ตัวเลข 190 ล้านดูใหญ่ แต่ Soft Power/creative จริงๆ แค่ <strong>8.6 ล้าน</strong> ที่เหลือเป็น R&amp;D มาตรฐานและส่งออก <i className="fa-solid fa-face-meh" style={{marginLeft:4}}></i></> },
       fashion:  { agencies:'DITP (กระทรวงพาณิชย์)',
-        note:<>งบ 158 ล้านแบ่งเป็น 2 ประเภท — <strong>งบส่งเสริมการส่งออก</strong> 140 ล้าน vs <strong>งบส่งเสริมการออกแบบ Soft Power</strong> 17.8 ล้าน ส่วนที่สนับสนุนดีไซเนอร์จริงๆ แค่ 11% เท่านั้น <i className="fa-solid fa-face-tired" style={{marginLeft:4}}></i></> },
-      perform:  { agencies:'กรมส่งเสริมวัฒนธรรม + สำนักงานศิลปวัฒนธรรมร่วมสมัย',
-        note:<>ส่วนใหญ่เป็นงาน ASEAN/นานาชาติ — งบพัฒนาพื้นที่แสดงในประเทศมีแค่ <strong>16 ล้าน</strong> <i className="fa-solid fa-face-meh-blank" style={{marginLeft:4}}></i></> },
-      book:     { agencies:'กรมส่งเสริมวัฒนธรรม + สำนักงานศิลปวัฒนธรรมร่วมสมัย',
-        note:<>หนังสือ วรรณกรรม รวม BL&amp;GL Rights Fair, Writers' Village และงาน Book Fair — งบเน้นการจัดงานและส่งออกลิขสิทธิ์ มากกว่าทุนสนับสนุนนักเขียนอิสระโดยตรง <i className="fa-solid fa-pen-to-square" style={{marginLeft:4}}></i></> },
-      design:   { agencies:'CEA + สำนักงานศิลปวัฒนธรรมร่วมสมัย + DITP',
-        note:<>DITP ให้ <strong>22.5 ล้าน</strong> เน้น Soft Power ส่งออก — งบ "ส่งเสริมการค้าผ่านการออกแบบ" มีสัดส่วนมากกว่างบ "พัฒนาดีไซเนอร์ในประเทศ"</> },
-      music:    { agencies:'กรมส่งเสริมวัฒนธรรม + สำนักงานศิลปวัฒนธรรมร่วมสมัย',
-        note:<>เกือบทั้งหมด (<strong>42.9 ล้าน</strong>) เป็น Thailand Music Awards ดนตรีงานเดียวน้อยกว่างบเกมถึง <strong>4×</strong> และไม่มีทุนตรงให้นักดนตรีอิสระ</> },
+        note:<><i className="fa-solid fa-shirt" style={{marginRight:6,color:'var(--or)'}}></i>งบ 158 ล้านแบ่งเป็น 2 ประเภท — <strong>งบส่งเสริมการส่งออก</strong> 140 ล้าน vs <strong>งบส่งเสริมการออกแบบ Soft Power</strong> 17.8 ล้าน ส่วนที่สนับสนุนดีไซเนอร์จริงๆ แค่ 11% เท่านั้น <i className="fa-solid fa-face-tired" style={{marginLeft:4}}></i></> },
+      perform:  { agencies:'กรมส่งเสริมวัฒนธรรม + สวรส.',
+        note:<><i className="fa-solid fa-masks-theater" style={{marginRight:6,color:'var(--or)'}}></i>ส่วนใหญ่เป็นงาน ASEAN/นานาชาติ — งบพัฒนาพื้นที่แสดงในประเทศมีแค่ <strong>16 ล้าน</strong> <i className="fa-solid fa-face-meh-blank" style={{marginLeft:4}}></i></> },
+      book:     { agencies:'กรมส่งเสริมวัฒนธรรม + สวรส.',
+        note:<><i className="fa-solid fa-book" style={{marginRight:6,color:'var(--or)'}}></i>รวม BL&amp;GL Rights Fair, Writers' Village และงาน Book Fair — งบเน้นการจัดงานและส่งออกลิขสิทธิ์ มากกว่าทุนสนับสนุนนักเขียนอิสระโดยตรง <i className="fa-solid fa-pen-to-square" style={{marginLeft:4}}></i></> },
+      design:   { agencies:'CEA + สวรส. + DITP',
+        note:<><i className="fa-solid fa-pen-ruler" style={{marginRight:6,color:'var(--or)'}}></i>DITP ให้ <strong>22.5 ล้าน</strong> เน้น Soft Power ส่งออก — งบ "ส่งเสริมการค้าผ่านการออกแบบ" มีสัดส่วนมากกว่างบ "พัฒนาดีไซเนอร์ในประเทศ"</> },
+      music:    { agencies:'กรมส่งเสริมวัฒนธรรม + สวรส.',
+        note:<><i className="fa-solid fa-music" style={{marginRight:6,color:'var(--or)'}}></i>เกือบทั้งหมด (<strong>42.9 ล้าน</strong>) เป็น Thailand Music Awards งานเดียว <i className="fa-solid fa-microphone" style={{margin:'0 3px'}}></i> น้อยกว่างบเกมถึง <strong>4×</strong> และไม่มีทุนตรงให้นักดนตรีอิสระ</> },
       welfare:  { agencies:'ไม่มีหน่วยงานรับผิดชอบ',
-        note:<>งบศิลปินอิสระปี69=0 บาท. จาก 4 กระทรวง. ไม่มีแม้แต่บรรทัดเดียวในงบสำหรับศิลปินอิสระ <i className="fa-solid fa-face-sad-tear" style={{marginLeft:4}}></i></> },
+        note:<><i className="fa-solid fa-shield-heart" style={{marginRight:6,color:'var(--or)'}}></i>0 บาท. จาก 4 กระทรวง. ไม่มีแม้แต่บรรทัดเดียวในงบสำหรับศิลปินอิสระ <i className="fa-solid fa-face-sad-tear" style={{marginLeft:4}}></i></> },
     };
 
     const wNote = welfareA > 0 && top.id !== 'welfare'
-      ? <><br /><span style={{color:'var(--tx3)',fontSize:11}}>+ คุณให้ศิลปินอิสระ {welfareA}% — รัฐในปี69ให้ 0 บาท</span></>
+      ? <><br /><span style={{color:'var(--tx3)',fontSize:11}}>+ คุณให้ศิลปินอิสระ {welfareA}% — รัฐให้ 0 บาท</span></>
       : null;
 
     if (isAllEqual) return (
